@@ -1,14 +1,21 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
+  <div id="app">
+    <VirtualPet />
+    <PetActions />
+  </div>
 </template>
 
 <script>
+import VirtualPet from './components/VirtualPet.vue';
+import PetActions from './components/PetActions.vue';
+
 export default {
   name: 'App',
   components: {
-
-  }
-}
+    VirtualPet,
+    PetActions,
+  },
+};
 </script>
 
 <style>
