@@ -1,0 +1,1 @@
+<!-- Displays the pet's statistics and current state -->

@@ -1,0 +1,1 @@
+<!-- Displays the pet and its status (happiness, hunger, etc.) -->

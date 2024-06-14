@@ -1,0 +1,1 @@
+<!-- Buttons or controls for interacting with the pet (feeding, playing, etc.) -->

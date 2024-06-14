@@ -1,4 +1,4 @@
-# virtual-pet
+# Virtual-Pet
 Virtual pet game using Vue.js
 
 ## Project setup
