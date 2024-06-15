@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="background">
     <VirtualPet />
     <PetActions />
   </div>
@@ -25,6 +25,15 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
+
+.background {
+  background-image: url('@/assets/bg.png');
+  background-size: cover;
+  background-position: center;
+  width: auto;
+  height: 600px;
+  overflow: hidden;
+}
+
 </style>

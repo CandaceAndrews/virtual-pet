@@ -3,8 +3,8 @@
 <template>
     <div>
         <h1>{{  pet.name }}</h1>
-        <p>Hunger: {{ pet.hunger }}</p>
-        <p>Happiness: {{ pet.happiness }}</p>
+        <p class="hunger">Hunger: {{ pet.hunger }}</p>
+        <p class="happiness">Happiness: {{ pet.happiness }}</p>
     </div>
 </template>
 
@@ -18,3 +18,10 @@ export default {
     },
 };
 </script>
+
+<style>
+.hunger {
+    background-color: white;
+    
+}
+</style>
