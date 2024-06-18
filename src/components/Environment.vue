@@ -1,1 +1,0 @@
-<!-- The background or setting for your game -->

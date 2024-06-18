@@ -1,19 +1,21 @@
 <template>
-  <div id="app" class="background">
+  <AppBackground>
     <VirtualPet />
     <PetActions />
-  </div>
+  </AppBackground>
 </template>
 
 <script>
 import VirtualPet from './components/VirtualPet.vue';
 import PetActions from './components/PetActions.vue';
+import AppBackground from './components/AppBackground.vue';
 
 export default {
   name: 'App',
   components: {
     VirtualPet,
     PetActions,
+    AppBackground,
   },
 };
 </script>
@@ -26,14 +28,4 @@ export default {
   text-align: center;
   color: #2c3e50;
 }
-
-.background {
-  background-image: url('@/assets/bg.png');
-  background-size: cover;
-  background-position: center;
-  width: auto;
-  height: 600px;
-  overflow: hidden;
-}
-
 </style>
