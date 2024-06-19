@@ -8,7 +8,7 @@
   
   <script>
   import { mapGetters } from 'vuex';
-  import petGif from '@/assets/quetzal.gif'; // Adjust the path to your GIF file
+  import petGif from '@/assets/quetzal.gif';
   
   export default {
     name: 'VirtualPet',
@@ -17,7 +17,7 @@
     },
     data() {
       return {
-        petImage: petGif, // Path to your GIF file
+        petImage: petGif, 
       };
     },
   };
@@ -33,8 +33,19 @@
   }
   
   .pet-image {
-    width: 200px; /* Adjust size as needed */
+    width: 300px; /* Adjust size as needed */
     height: auto;
+    position: relative;
+    animation: walk 5s infinite alternate ease-in-out;
+  }
+
+  @keyframes walk {
+    0% {
+      left: 0;
+    }
+    100% {
+      left: 200px; /* Adjust distance as needed */
+    }
   }
   </style>
   
