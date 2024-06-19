@@ -36,7 +36,7 @@
     width: 300px; /* Adjust size as needed */
     height: auto;
     position: relative;
-    animation: walk 5s infinite alternate ease-in-out;
+    animation: walk 10s infinite alternate ease-in-out;
   }
 
   @keyframes walk {
@@ -44,7 +44,7 @@
       left: 0;
     }
     100% {
-      left: 200px; /* Adjust distance as needed */
+      left: 300px; /* Adjust distance as needed */
     }
   }
   </style>
