@@ -27,24 +27,28 @@
   .virtual-pet {
     position: absolute;
     top: 70%;
-    left: 50%;
+    /* left: 50%; */
+    left: 0;
+    width: 100%;
     transform: translate(-50%, -50%);
     text-align: center;
   }
   
   .pet-image {
-    width: 300px; /* Adjust size as needed */
+    width: 300px;
     height: auto;
     position: relative;
-    animation: walk 10s infinite alternate ease-in-out;
+    animation: walk 6s infinite alternate ease-in-out;
   }
 
   @keyframes walk {
     0% {
-      left: 0;
+      /* left: 0; */
+      transform: translateX(0);
     }
     100% {
-      left: 300px; /* Adjust distance as needed */
+      /* left: 300px; */
+      transform: translateX(calc(100vw - 300px));
     }
   }
   </style>
