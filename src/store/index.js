@@ -3,7 +3,7 @@ import { createStore } from 'vuex';
 export default createStore({
   state: {
     pet: {
-      name: 'Quetzalcoatlus',
+      name: 'Tyrannosaurus Rex',
       hunger: 50,
       happiness: 50,
     },

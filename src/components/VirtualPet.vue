@@ -35,7 +35,7 @@ export default {
         // Update the image for walking animation
         this.currentImageIndex = (this.currentImageIndex + 1) % this.images.length;
         this.petImage = this.images[this.currentImageIndex];
-      }, 200); // Change image every 200ms
+      }, 230); // Change image every 230ms
 
       // Move the pet across the screen and flip direction
       this.movePet();
@@ -43,19 +43,20 @@ export default {
     movePet() {
       const petElement = this.$el.querySelector('.pet-image');
       let direction = 1; // 1 for right, -1 for left
-      let position = 0;
+      let position = -900; // Start off-screen to the left
+      const petWidth = 900; // Adjust width to match the pet image width
 
       setInterval(() => {
-        if (direction === 1 && position >= (window.innerWidth - 300)) { // Right edge
+        if (direction === 1 && position >= window.innerWidth) { // Right edge off-screen
           direction = -1;
           this.flipped = true;
-        } else if (direction === -1 && position <= 0) { // Left edge
+        } else if (direction === -1 && position <= -petWidth) { // Left edge off-screen
           direction = 1;
           this.flipped = false;
         }
         position += 5 * direction;
         petElement.style.left = `${position}px`;
-      }, 50); // Adjust the interval as needed for smoothness
+      }, 40); // Adjust the interval as needed for smoothness
     },
   },
 };
@@ -64,14 +65,14 @@ export default {
 <style scoped>
 .virtual-pet {
   position: absolute;
-  top: 50%;
+  top: 37%;
   left: 0;
   width: 100%;
   text-align: center;
 }
 
 .pet-image {
-  width: 700px; /* Adjust size as needed */
+  width: 900px; /* Adjust size as needed */
   height: auto;
   position: absolute;
   transition: left 0.05s linear; /* Smooth transition for the movement */
@@ -81,7 +82,3 @@ export default {
   transform: scaleX(-1); /* Flip the image horizontally */
 }
 </style>
-
-
-
-
