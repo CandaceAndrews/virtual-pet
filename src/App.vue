@@ -2,8 +2,8 @@
   <AppBackground>
     <VirtualPet />
     <PetStats />
-    <PetActions />
   </AppBackground>
+  <PetActions />
 </template>
 
 <script>

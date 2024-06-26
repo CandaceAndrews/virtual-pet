@@ -20,7 +20,7 @@ export default {
 
 <style scoped>
 .pet-stats {
-  background-color: #f8e1a1; /* A light wheat color */
+  background-color: #97d2b3; /* A light wheat color */
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -43,7 +43,7 @@ export default {
   font-size: 1.2em;
   margin: 5px 0;
   padding: 10px;
-  background-color: #fff4db; /* Slightly lighter background for the stats */
+  background-color: #dbffdb; /* Slightly lighter background for the stats */
   border-radius: 5px;
 }
 </style>
