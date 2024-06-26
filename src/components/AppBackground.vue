@@ -1,4 +1,4 @@
-<!-- The background or setting for your game -->
+<!-- The background or setting for game -->
  <template>
     <div class="background">
         <slot></slot>

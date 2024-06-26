@@ -2,7 +2,7 @@
 
 <template>
   <div class="virtual-pet">
-    <img :src="petImage" alt="Virtual Pet" class="pet-image" />
+    <img :src="petImage" :class="{ 'flipped': flipped }" alt="Virtual Pet" class="pet-image" />
   </div>
 </template>
 
@@ -23,6 +23,7 @@ export default {
       images: [pet1, pet2, pet3, pet4],
       currentImageIndex: 0,
       petImage: pet1,
+      flipped: false, // To track the flipping state
     };
   },
   mounted() {
@@ -31,9 +32,30 @@ export default {
   methods: {
     startAnimation() {
       setInterval(() => {
+        // Update the image for walking animation
         this.currentImageIndex = (this.currentImageIndex + 1) % this.images.length;
         this.petImage = this.images[this.currentImageIndex];
       }, 200); // Change image every 200ms
+
+      // Move the pet across the screen and flip direction
+      this.movePet();
+    },
+    movePet() {
+      const petElement = this.$el.querySelector('.pet-image');
+      let direction = 1; // 1 for right, -1 for left
+      let position = 0;
+
+      setInterval(() => {
+        if (direction === 1 && position >= (window.innerWidth - 300)) { // Right edge
+          direction = -1;
+          this.flipped = true;
+        } else if (direction === -1 && position <= 0) { // Left edge
+          direction = 1;
+          this.flipped = false;
+        }
+        position += 5 * direction;
+        petElement.style.left = `${position}px`;
+      }, 50); // Adjust the interval as needed for smoothness
     },
   },
 };
@@ -42,36 +64,24 @@ export default {
 <style scoped>
 .virtual-pet {
   position: absolute;
-  top: 70%;
+  top: 50%;
   left: 0;
   width: 100%;
   text-align: center;
 }
 
 .pet-image {
-  width: 300px; /* Adjust size as needed */
+  width: 700px; /* Adjust size as needed */
   height: auto;
   position: absolute;
-  animation: walk 10s infinite alternate ease-in-out;
+  transition: left 0.05s linear; /* Smooth transition for the movement */
 }
 
-@keyframes walk {
-  0% {
-    left: 0;
-    transform: scaleX(1);
-  }
-  50% {
-    left: calc(100% - 300px); /* Move to the right edge, considering the width of the pet */
-    transform: scaleX(1);
-  }
-  50.01% {
-    left: calc(100% - 300px);
-    transform: scaleX(-1); /* Flip the pet image */
-  }
-  100% {
-    left: 0;
-    transform: scaleX(-1); /* Move back to the left edge */
-  }
+.flipped {
+  transform: scaleX(-1); /* Flip the image horizontally */
 }
 </style>
+
+
+
 
