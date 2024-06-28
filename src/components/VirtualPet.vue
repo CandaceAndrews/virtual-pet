@@ -5,11 +5,15 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import pet1 from '@/assets/pet1.png';
 import pet2 from '@/assets/pet2.png';
 import pet3 from '@/assets/pet3.png';
 import pet4 from '@/assets/pet4.png';
+import eat1 from '@/assets/eat1.png';
+import eat2 from '@/assets/eat2.png';
+import eat3 from '@/assets/eat3.png';
+import eat4 from '@/assets/eat4.png';
 
 export default {
   name: 'VirtualPet',
@@ -18,43 +22,69 @@ export default {
   },
   data() {
     return {
-      images: [pet1, pet2, pet3, pet4],
+      walkingImages: [pet1, pet2, pet3, pet4],
+      eatingImages: [eat1, eat2, eat3, eat4],
       currentImageIndex: 0,
       petImage: pet1,
-      flipped: false, // To track the flipping state
+      flipped: false,
+      isEating: false,
+      animationInterval: null,
+      movementInterval: null,
     };
   },
   mounted() {
-    this.startAnimation();
+    this.startWalkingAnimation();
+    this.$root.$on('feedPet', this.handleFeed); // Listen for 'feedPet' event
+  },
+  beforeUnmount() {
+    this.$root.$off('feedPet', this.handleFeed); // Remove event listener
   },
   methods: {
-    startAnimation() {
-      setInterval(() => {
-        // Update the image for walking animation
-        this.currentImageIndex = (this.currentImageIndex + 1) % this.images.length;
-        this.petImage = this.images[this.currentImageIndex];
-      }, 230); // Change image every 230ms
-
-      // Move the pet across the screen and flip direction
+    ...mapActions(['feedPet']),
+    startWalkingAnimation() {
+      this.animationInterval = setInterval(() => {
+        this.currentImageIndex = (this.currentImageIndex + 1) % this.walkingImages.length;
+        this.petImage = this.walkingImages[this.currentImageIndex];
+      }, 230);
       this.movePet();
+    },
+    startEatingAnimation() {
+      this.isEating = true;
+      clearInterval(this.animationInterval); // Stop walking animation
+      this.currentImageIndex = 0;
+      this.animationInterval = setInterval(() => {
+        this.currentImageIndex = (this.currentImageIndex + 1) % this.eatingImages.length;
+        this.petImage = this.eatingImages[this.currentImageIndex];
+      }, 230);
+      setTimeout(() => {
+        this.isEating = false;
+        clearInterval(this.animationInterval);
+        this.startWalkingAnimation(); // Resume walking animation
+      }, 2000);
     },
     movePet() {
       const petElement = this.$el.querySelector('.pet-image');
-      let direction = 1; // 1 for right, -1 for left
-      let position = -900; // Start off-screen to the left
-      const petWidth = 900; // Adjust width to match the pet image width
+      let direction = 1;
+      let position = -900;
+      const petWidth = 900;
 
-      setInterval(() => {
-        if (direction === 1 && position >= window.innerWidth) { // Right edge off-screen
-          direction = -1;
-          this.flipped = true;
-        } else if (direction === -1 && position <= -petWidth) { // Left edge off-screen
-          direction = 1;
-          this.flipped = false;
+      this.movementInterval = setInterval(() => {
+        if (!this.isEating) {
+          if (direction === 1 && position >= window.innerWidth) {
+            direction = -1;
+            this.flipped = true;
+          } else if (direction === -1 && position <= -petWidth) {
+            direction = 1;
+            this.flipped = false;
+          }
+          position += 5 * direction;
+          petElement.style.left = `${position}px`;
         }
-        position += 5 * direction;
-        petElement.style.left = `${position}px`;
-      }, 40); // Adjust the interval as needed for smoothness
+      }, 40);
+    },
+    handleFeed() {
+      this.feedPet(); // Trigger Vuex action to update hunger
+      this.startEatingAnimation(); // Trigger eating animation
     },
   },
 };
@@ -70,13 +100,14 @@ export default {
 }
 
 .pet-image {
-  width: 900px; /* Adjust size as needed */
+  width: 900px;
   height: auto;
   position: absolute;
-  transition: left 0.05s linear; /* Smooth transition for the movement */
+  transition: left 0.05s linear;
 }
 
 .flipped {
-  transform: scaleX(-1); /* Flip the image horizontally */
+  transform: scaleX(-1);
 }
 </style>
+
