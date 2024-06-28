@@ -1,4 +1,3 @@
-<!-- Displays the pet's statistics and current state -->
 <template>
   <div class="pet-stats">
     <h1 class="name">{{ pet.name }}</h1>

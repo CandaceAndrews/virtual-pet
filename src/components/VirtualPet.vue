@@ -1,5 +1,3 @@
-<!-- Displays the pet and its status (happiness, hunger, etc.) -->
-
 <template>
   <div class="virtual-pet">
     <img :src="petImage" :class="{ 'flipped': flipped }" alt="Virtual Pet" class="pet-image" />
