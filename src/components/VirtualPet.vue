@@ -1,5 +1,5 @@
 <template>
-  <div class="virtual-pet">
+  <div class="virtual-pet" @dragover.prevent @drop="onDrop">
     <img :src="petImage" :class="{ 'flipped': flipped }" alt="Virtual Pet" class="pet-image" />
   </div>
 </template>
@@ -14,6 +14,7 @@ import eat1 from '@/assets/eat1.png';
 import eat2 from '@/assets/eat2.png';
 import eat3 from '@/assets/eat3.png';
 import eat4 from '@/assets/eat4.png';
+import eventBus from '@/eventBus';
 
 export default {
   name: 'VirtualPet',
@@ -34,14 +35,15 @@ export default {
   },
   mounted() {
     this.startWalkingAnimation();
-    this.$root.$on('feedPet', this.handleFeed); // Listen for 'feedPet' event
+    eventBus.$on('feedPet', this.handleFeed); // Listen for 'feedPet' event
   },
   beforeUnmount() {
-    this.$root.$off('feedPet', this.handleFeed); // Remove event listener
+    eventBus.$off('feedPet', this.handleFeed); // Remove event listener
   },
   methods: {
     ...mapActions(['feedPet']),
     startWalkingAnimation() {
+      console.log('Walking animation started');
       this.animationInterval = setInterval(() => {
         this.currentImageIndex = (this.currentImageIndex + 1) % this.walkingImages.length;
         this.petImage = this.walkingImages[this.currentImageIndex];
@@ -49,6 +51,7 @@ export default {
       this.movePet();
     },
     startEatingAnimation() {
+      console.log('Eating animation started');
       this.isEating = true;
       clearInterval(this.animationInterval); // Stop walking animation
       this.currentImageIndex = 0;
@@ -83,9 +86,18 @@ export default {
       }, 40);
     },
     handleFeed() {
+      console.log('handleFeed called');
       this.feedPet(); // Trigger Vuex action to update hunger
       this.startEatingAnimation(); // Trigger eating animation
     },
+    onDrop(event) {
+      const action = event.dataTransfer.getData('action');
+      if (action == 'feed') {
+        this.handleFeed();
+      } else if (action == 'play') {
+        this.handlePlay();
+      }
+    }
   },
 };
 </script>
@@ -110,4 +122,5 @@ export default {
   transform: scaleX(-1);
 }
 </style>
+
 

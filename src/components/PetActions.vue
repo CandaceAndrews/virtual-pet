@@ -1,21 +1,30 @@
 <template>
   <div class="pet-actions">
-    <button @click="handleFeed" class="feed">Feed</button>
-    <button @click="playWithPet" class="play">Play</button>
+    <img
+      src="@/assets/food.png"
+      alt="Food"
+      class="draggable"
+      id="food"
+      @dragstart="onDragStart($event, 'feed')"
+    />
+    <img
+      src="@/assets/toy.png"
+      alt="Toy"
+      class="draggable"
+      id="play"
+      @dragstart="onDragStart($event, 'play')"
+    />
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
-
 export default {
   name: 'PetActions',
   methods: {
-    ...mapActions(['feedPet', 'playWithPet']),
-    handleFeed() {
-      this.feedPet(); // Trigger Vuex action to update hunger
-    },
-  },
+    onDragStart(event, action) {
+      event.dataTransfer.setData('action', action);
+    }
+  }
 };
 </script>
 
@@ -26,14 +35,13 @@ export default {
   border-top: solid rgb(23, 35, 31) 3px;
 }
 
-.feed {
-  padding: 5px 10px;
-  margin-right: 7px;
+.draggable {
+  width: 50px;
+  height: 50px;
+  cursor: grab;
+  margin: 0px 15px 2px 15px;
 }
 
-.play {
-  padding: 5px 10px;
-}
 </style>
 
 
