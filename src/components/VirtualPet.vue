@@ -31,6 +31,8 @@ export default {
       isEating: false,
       animationInterval: null,
       movementInterval: null,
+      position: -900, // Added to keep track of position
+      direction: 1 // Added to keep track of direction
     };
   },
   mounted() {
@@ -39,11 +41,14 @@ export default {
   },
   beforeUnmount() {
     eventBus.$off('feedPet', this.handleFeed); // Remove event listener
+    clearInterval(this.animationInterval);
+    clearInterval(this.movementInterval);
   },
   methods: {
     ...mapActions(['feedPet']),
     startWalkingAnimation() {
       console.log('Walking animation started');
+      clearInterval(this.animationInterval); // Ensure any previous interval is cleared
       this.animationInterval = setInterval(() => {
         this.currentImageIndex = (this.currentImageIndex + 1) % this.walkingImages.length;
         this.petImage = this.walkingImages[this.currentImageIndex];
@@ -54,6 +59,7 @@ export default {
       console.log('Eating animation started');
       this.isEating = true;
       clearInterval(this.animationInterval); // Stop walking animation
+      clearInterval(this.movementInterval); // Stop movement animation
       this.currentImageIndex = 0;
       this.animationInterval = setInterval(() => {
         this.currentImageIndex = (this.currentImageIndex + 1) % this.eatingImages.length;
@@ -67,21 +73,18 @@ export default {
     },
     movePet() {
       const petElement = this.$el.querySelector('.pet-image');
-      let direction = 1;
-      let position = -900;
-      const petWidth = 900;
-
+      clearInterval(this.movementInterval); // Ensure any previous interval is cleared
       this.movementInterval = setInterval(() => {
         if (!this.isEating) {
-          if (direction === 1 && position >= window.innerWidth) {
-            direction = -1;
+          if (this.direction === 1 && this.position >= window.innerWidth) {
+            this.direction = -1;
             this.flipped = true;
-          } else if (direction === -1 && position <= -petWidth) {
-            direction = 1;
+          } else if (this.direction === -1 && this.position <= -900) { // Updated with this.position and this.direction
+            this.direction = 1;
             this.flipped = false;
           }
-          position += 5 * direction;
-          petElement.style.left = `${position}px`;
+          this.position += 5 * this.direction;
+          petElement.style.left = `${this.position}px`;
         }
       }, 40);
     },
@@ -122,5 +125,6 @@ export default {
   transform: scaleX(-1);
 }
 </style>
+
 
 
