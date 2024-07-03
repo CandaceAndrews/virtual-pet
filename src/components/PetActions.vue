@@ -35,7 +35,21 @@ export default {
   border-top: solid rgb(23, 35, 31) 3px;
 }
 
-.draggable {
+/* .draggable {
+  width: 50px;
+  height: 50px;
+  cursor: grab;
+  margin: 0px 15px 2px 15px;
+} */
+
+#food {
+  width: 60px;
+  height: 60px;
+  cursor: grab;
+  /* margin: 0px 15px 2px 15px; */
+}
+
+#play {
   width: 50px;
   height: 50px;
   cursor: grab;
@@ -43,7 +57,3 @@ export default {
 }
 
 </style>
-
-
-
-

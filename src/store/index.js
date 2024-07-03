@@ -17,6 +17,14 @@ export default createStore({
       state.pet.happiness = Math.min(state.pet.happiness + 10, 100);
       console.log('Pet happiness increased', state.pet.happiness);
     },
+    decreaseHunger(state) {
+      state.pet.hunger = Math.min(state.pet.hunger + 1, 100);
+      console.log('Pet hunger increased', state.pet.hunger);
+    },
+    decreaseHappiness(state) {
+      state.pet.happiness = Math.max(state.pet.happiness - 1, 0);
+      console.log('Pet happiness decreased', state.pet.happiness);
+    },
   },
   actions: {
     feedPet({ commit }) {
@@ -25,6 +33,12 @@ export default createStore({
     playWithPet({ commit }) {
       commit('playWithPet');
     },
+    decreaseHunger({ commit }) {
+      commit('decreaseHunger');
+    },
+    decreaseHappiness({ commit }) {
+      commit('decreaseHappiness');
+    }
   },
   getters: {
     pet(state) {

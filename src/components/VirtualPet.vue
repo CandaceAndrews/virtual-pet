@@ -27,7 +27,7 @@ export default {
     return {
       walkingImages: [pet1, pet2, pet3, pet4],
       eatingImages: [eat1, eat2, eat3, eat4],
-      playingImages: [play1, play2], // Use play images here
+      playingImages: [play1, play2],
       currentImageIndex: 0,
       petImage: pet1,
       flipped: false,
@@ -43,12 +43,16 @@ export default {
     this.startWalkingAnimation();
     eventBus.$on('feedPet', this.handleFeed); // Listen for 'feedPet' event
     eventBus.$on('playWithPet', this.handlePlay); // Listen for 'playWithPet' event
+    this.startHungerTimer();
+    this.startHappinessTimer();
   },
   beforeUnmount() {
     eventBus.$off('feedPet', this.handleFeed); // Remove event listener
     eventBus.$off('playWithPet', this.handlePlay); // Remove event listener
     clearInterval(this.animationInterval);
     clearInterval(this.movementInterval);
+    clearInterval(this.hungerInterval);
+    clearInterval(this.happinessInterval);
   },
   methods: {
     ...mapActions(['feedPet']),
@@ -110,6 +114,23 @@ export default {
           petElement.style.left = `${this.position}px`;
         }
       }, 40);
+    },
+
+    startHungerTimer() {
+      this.hungerInterval = setInterval(() => {
+        this.decreaseHunger();
+      }, 1000); // Decrease hunger every 10 seconds
+    },
+    startHappinessTimer() {
+      this.happinessInterval = setInterval(() => {
+        this.decreaseHappiness();
+      }, 15000); // Decrease happiness every 15 seconds
+    },
+    decreaseHunger() {
+      this.$store.dispatch('decreaseHunger');
+    },
+    decreaseHappiness() {
+      this.$store.dispatch('decreaseHappiness');
     },
     handleFeed() {
       console.log('handleFeed called');
