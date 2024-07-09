@@ -1,8 +1,21 @@
 <template>
   <div class="pet-stats">
+    <!-- NAME -->
     <h1 class="name">{{ pet.name }}</h1>
-    <p class="hunger">Hunger: {{ pet.hunger }}</p>
-    <p class="happiness">Happiness: {{ pet.happiness }}</p>
+    <!-- HUNGER BAR -->
+    <div class="bar">
+      <span>Hunger</span>
+      <div class="progress">
+        <div class="progress-bar" :style="{ width: hungerPercentage + '%' }"></div>
+      </div>
+    </div>
+    <!-- HAPPINESS BAR -->
+    <div class="bar">
+      <span>Happiness</span>
+      <div class="progress">
+        <div class="progress-bar" :style="{ width: happinessPercentage + '%' }"></div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -13,6 +26,12 @@ export default {
   name: 'PetStats',
   computed: {
     ...mapGetters(['pet']),
+    hungerPercentage() {
+      return this.pet.hunger;
+    },
+    happinessPercentage() {
+      return this.pet.happiness;
+    }
   }
 };
 </script>
@@ -39,13 +58,24 @@ export default {
   margin-bottom: 10px;
 }
 
-.hunger,
-.happiness {
-  font-size: 1.2em;
-  margin: 5px 0;
-  padding: 10px;
-  background-color: #dbffdb; /* Slightly lighter background for the stats */
-  border-radius: 5px;
+.bar {
+  margin: 10px 0;
+  text-align: center;
+}
+
+.progress {
+  width: 100%;
+  height: 20px;
+  background-color: #e64a4a;
+  border-radius: 10px;
+  overflow: hidden;
+  border: solid 1px rgb(68, 84, 72); 
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #7ac672;
+  transition: width 0.5s;
 }
 
 /* Responsive text sizing for the pet's name */
@@ -66,5 +96,5 @@ export default {
     font-size: 1em;
   }
 }
-
 </style>
+
