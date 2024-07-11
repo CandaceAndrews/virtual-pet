@@ -17,6 +17,9 @@ import eat4 from '@/assets/eat4.png';
 import play1 from '@/assets/play1.png';
 import play2 from '@/assets/play2.png';
 import eventBus from '@/eventBus';
+import feedSound from '@/assets/sounds/feed.mp3';
+import playSound from '@/assets/sounds/play.wav';
+import thresholdSound from '@/assets/sounds/threshold.wav';
 
 export default {
   name: 'VirtualPet',
@@ -36,7 +39,10 @@ export default {
       animationInterval: null,
       movementInterval: null,
       position: -900, // Added to keep track of position
-      direction: 1 // Added to keep track of direction
+      direction: 1, // Added to keep track of direction
+      feedAudio: new Audio(feedSound),
+      playAudio: new Audio(playSound),
+      thresholdAudio: new Audio(thresholdSound),
     };
   },
   mounted() {
@@ -115,11 +121,10 @@ export default {
         }
       }, 40);
     },
-
     startHungerTimer() {
       this.hungerInterval = setInterval(() => {
         this.decreaseHunger();
-      }, 1000); // Decrease hunger every 10 seconds
+      }, 10000); // Decrease hunger every 10 seconds
     },
     startHappinessTimer() {
       this.happinessInterval = setInterval(() => {
@@ -134,11 +139,13 @@ export default {
     },
     handleFeed() {
       console.log('handleFeed called');
+      this.feedAudio.play(); // Play feed sound
       this.feedPet(); // Trigger Vuex action to update hunger
       this.startEatingAnimation(); // Trigger eating animation
     },
     handlePlay() {
       console.log('handlePlay called');
+      this.playAudio.play(); // Play play sound
       this.playWithPet(); // Trigger Vuex action to update play
       this.startPlayAnimation(); // Trigger play animation
     },
@@ -151,6 +158,18 @@ export default {
       }
     }
   },
+  watch: {
+    'pet.hunger'(newHunger) {
+      if (newHunger <= 20) {
+        this.thresholdAudio.play(); // Play threshold sound for low hunger
+      }
+    },
+    'pet.happiness'(newHappiness) {
+      if (newHappiness <= 20) { // Updated to play sound when happiness is too low
+        this.thresholdAudio.play(); // Play threshold sound for low happiness
+      }
+    }
+  }
 };
 </script>
 
