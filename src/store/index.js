@@ -9,46 +9,30 @@ export default createStore({
       cleanliness: 100,
     },
   },
-  // mutations: {
-  //   feedPet(state) {
-  //     state.pet.hunger = Math.max(state.pet.hunger - 10, 0);
-  //     console.log('Pet hunger reduced', state.pet.hunger);
-  //   },
-  //   playWithPet(state) {
-  //     state.pet.happiness = Math.min(state.pet.happiness + 10, 100);
-  //     console.log('Pet happiness increased', state.pet.happiness);
-  //   },
-  //   decreaseHunger(state) {
-  //     state.pet.hunger = Math.min(state.pet.hunger + 1, 100);
-  //     console.log('Pet hunger increased', state.pet.hunger);
-  //   },
-  //   decreaseHappiness(state) {
-  //     state.pet.happiness = Math.max(state.pet.happiness - 1, 0);
-  //     console.log('Pet happiness decreased', state.pet.happiness);
-  //   },
   mutations: {
     feedPet(state) {
       state.pet.hunger = Math.min(state.pet.hunger + 10, 100);
-      console.log('Pet hunger increased', state.pet.happiness);
+      console.log('Hunger stat increased', state.pet.happiness);
     },
     playWithPet(state) {
       state.pet.happiness = Math.min(state.pet.happiness + 10, 100);
-      console.log('Pet happiness increased', state.pet.happiness);
+      console.log('Happiness stat increased', state.pet.happiness);
     },
     cleanPet(state) {
       state.pet.cleanliness = Math.min(state.pet.cleanliness + 10, 100);
-      console.log('Pet cleanliness increased', state.pet.cleanliness);
+      console.log('Cleanliness  stat increased', state.pet.cleanliness);
     },
     decreaseHunger(state) {
       state.pet.hunger = Math.max(state.pet.hunger - 1, 0);
-      console.log('Pet hunger decreased', state.pet.happiness);
+      console.log('Hunger stat decreased', state.pet.happiness);
     },
     decreaseHappiness(state) {
       state.pet.happiness = Math.max(state.pet.happiness - 1, 0);
-      console.log('Pet happiness decreased', state.pet.happiness);
+      console.log('Happiness stat decreased', state.pet.happiness);
     },
     decreaseCleanliness(state) {
       state.pet.cleanliness = Math.max(state.pet.cleanliness - 1, 0);
+      console.log('Cleanliness stat decreased', state.pet.cleanliness);
     }
   },
   actions: {

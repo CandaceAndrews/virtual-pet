@@ -61,7 +61,7 @@ export default {
     eventBus.$on('cleanPet', this.handleClean); // Listen for 'cleanPet'
     this.startHungerTimer();
     this.startHappinessTimer();
-    this.startCleanTimer();
+    this.startCleanlinessTimer();
   },
   beforeUnmount() {
     eventBus.$off('feedPet', this.handleFeed); // Remove event listener
