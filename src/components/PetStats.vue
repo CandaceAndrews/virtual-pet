@@ -16,6 +16,13 @@
         <div class="progress-bar" :style="{ width: happinessPercentage + '%' }"></div>
       </div>
     </div>
+    <!-- CLEAN BAR -->
+    <div class="bar">
+      <span>Cleanliness</span>
+      <div class="progress">
+        <div class="progress-bar" :style="{ width: cleanlinessPercentage + '%' }"></div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -31,7 +38,10 @@ export default {
     },
     happinessPercentage() {
       return this.pet.happiness;
-    }
+    },
+    cleanlinessPercentage() {
+      return this.pet.cleanliness;
+    },
   }
 };
 </script>

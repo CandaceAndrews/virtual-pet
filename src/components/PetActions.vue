@@ -14,6 +14,13 @@
       id="play"
       @dragstart="onDragStart($event, 'play')"
     />
+  <img
+      src="@/assets/clean.png"
+      alt="Brush"
+      class="draggable"
+      id="clean"
+      @dragstart="onDragStart($event, 'clean')"
+    />
   </div>
 </template>
 
@@ -35,25 +42,22 @@ export default {
   border-top: solid rgb(23, 35, 31) 3px;
 }
 
-/* .draggable {
-  width: 50px;
-  height: 50px;
-  cursor: grab;
-  margin: 0px 15px 2px 15px;
-} */
-
 #food {
   width: 60px;
   height: 60px;
   cursor: grab;
-  /* margin: 0px 15px 2px 15px; */
 }
 
 #play {
   width: 50px;
   height: 50px;
   cursor: grab;
-  margin: 0px 15px 2px 15px;
+  margin: 0px 20px 2px 20px;
 }
 
+#clean {
+  width: 50px;
+  height: 50px;
+  cursor: grab;
+}
 </style>
