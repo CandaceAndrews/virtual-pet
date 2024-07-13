@@ -204,18 +204,6 @@ export default {
       }
     }
   },
-  watch: {
-    'pet.hunger'(newHunger) {
-      if (newHunger <= 20) {
-        this.thresholdAudio.play(); // Play threshold sound for low hunger
-      }
-    },
-    'pet.happiness'(newHappiness) {
-      if (newHappiness <= 20) { // Updated to play sound when happiness is too low
-        this.thresholdAudio.play(); // Play threshold sound for low happiness
-      }
-    }
-  }
 };
 </script>
 
