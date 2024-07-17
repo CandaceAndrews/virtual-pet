@@ -1,27 +1,37 @@
 <template>
   <div class="virtual-pet" @dragover.prevent @drop="onDrop">
     <img :src="petImage" :class="{ 'flipped': flipped }" alt="Virtual Pet" class="pet-image" />
+    <NotificationAlert ref="notification" />
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
+import NotificationAlert from './NotificationAlert.vue';
+
+// Walking Images
 import pet1 from '@/assets/pet1.png';
 import pet2 from '@/assets/pet2.png';
 import pet3 from '@/assets/pet3.png';
 import pet4 from '@/assets/pet4.png';
+// Eating Images
 import eat1 from '@/assets/eat1.png';
 import eat2 from '@/assets/eat2.png';
 import eat3 from '@/assets/eat3.png';
 import eat4 from '@/assets/eat4.png';
+// Play Images
 import play1 from '@/assets/play1.png';
 import play2 from '@/assets/play2.png';
+// Clean Images
 import clean1 from '@/assets/clean1.png';
 import clean2 from '@/assets/clean2.png';
 import clean3 from '@/assets/clean3.png';
 import clean4 from '@/assets/clean4.png';
 import clean5 from '@/assets/clean5.png';
+
 import eventBus from '@/eventBus';
+
+// Sounds
 import feedSound from '@/assets/sounds/feed.mp3';
 import playSound from '@/assets/sounds/play.wav';
 import cleanSound from '@/assets/sounds/clean.wav';
@@ -29,6 +39,9 @@ import thresholdSound from '@/assets/sounds/threshold.wav';
 
 export default {
   name: 'VirtualPet',
+  components: {
+    NotificationAlert,
+  },
   computed: {
     ...mapGetters(['pet']),
   },
@@ -52,7 +65,25 @@ export default {
       playAudio: new Audio(playSound),
       cleanAudio: new Audio(cleanSound),
       thresholdAudio: new Audio(thresholdSound),
+      notificationMessage: '',
     };
+  },
+  watch: {
+    'pet.hunger'(newVal) {
+      if (newVal === 0) {
+        this.$refs.notification.showNotification('Your pet is very hungry!');
+      }
+    },
+    'pet.happiness'(newVal) {
+      if (newVal === 0) {
+        this.$refs.notification.showNotification('Your pet is very sad!');
+      }
+    },
+    'pet.cleanliness'(newVal) {
+      if (newVal === 0) {
+        this.$refs.notification.showNotification('Your pet is very dirty!');
+      }
+    },
   },
   mounted() {
     this.startWalkingAnimation();
@@ -87,7 +118,7 @@ export default {
       this.movePet();
     },
     startEatingAnimation() {
-      console.log('Eating animation started');
+      // console.log('Eating animation started');
       this.isEating = true;
       clearInterval(this.animationInterval); // Stop walking animation
       clearInterval(this.movementInterval); // Stop movement animation
@@ -103,7 +134,7 @@ export default {
       }, 2000);
     },
     startPlayAnimation() {
-      console.log('Play animation started');
+      // console.log('Play animation started');
       this.isPlaying = true;
       clearInterval(this.animationInterval); // Stop walking animation
       clearInterval(this.movementInterval); // Stop movement animation
@@ -119,7 +150,7 @@ export default {
       }, 2000);
     },
     startCleaningAnimation() {
-      console.log('Cleaning animation started');
+      // console.log('Cleaning animation started');
       this.isCleaning = true;
       clearInterval(this.animationInterval); // Stop walking animation
       clearInterval(this.movementInterval); // Stop movement animation
@@ -154,7 +185,7 @@ export default {
     startHungerTimer() {
       this.hungerInterval = setInterval(() => {
         this.decreaseHunger();
-      }, 10000); // Decrease hunger every 10 seconds
+      }, 2000); // Decrease hunger every 2 seconds
     },
     startHappinessTimer() {
       this.happinessInterval = setInterval(() => {
@@ -177,29 +208,29 @@ export default {
     },
     handleFeed() {
       console.log('handleFeed called');
-      this.feedAudio.play(); // Play feed sound
+      this.feedAudio.play(); 
       this.feedPet(); // Trigger Vuex action to update hunger
-      this.startEatingAnimation(); // Trigger eating animation
+      this.startEatingAnimation(); 
     },
     handlePlay() {
       console.log('handlePlay called');
-      this.playAudio.play(); // Play play sound
+      this.playAudio.play(); 
       this.playWithPet(); // Trigger Vuex action to update play
-      this.startPlayAnimation(); // Trigger play animation
+      this.startPlayAnimation(); 
     },
     handleClean() {
       console.log('handleClean called');
-      this.cleanAudio.play(); // Play clean sound
+      this.cleanAudio.play(); 
       this.cleanPet(); //Trigger Vuex action to update cleanliness
-      this.startCleaningAnimation(); // Trigger clean animation
+      this.startCleaningAnimation(); 
     },
     onDrop(event) {
       const action = event.dataTransfer.getData('action');
-      if (action == 'feed') {
+      if (action === 'feed') {
         this.handleFeed();
-      } else if (action == 'play') {
+      } else if (action === 'play') {
         this.handlePlay();
-      } else if (action == 'clean') {
+      } else if (action === 'clean') {
         this.handleClean();
       }
     }
@@ -227,3 +258,4 @@ export default {
   transform: scaleX(-1);
 }
 </style>
+

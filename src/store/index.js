@@ -4,7 +4,7 @@ export default createStore({
   state: {
     pet: {
       name: 'Tyrannosaurus Rex',
-      hunger: 100,
+      hunger: 30,
       happiness: 100,
       cleanliness: 100,
     },
