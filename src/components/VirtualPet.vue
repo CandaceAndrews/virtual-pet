@@ -29,12 +29,17 @@ import clean3 from '@/assets/clean3.png';
 import clean4 from '@/assets/clean4.png';
 import clean5 from '@/assets/clean5.png';
 
+// Sleep Images
+import sleep1 from '@/assets/sleep1.png';
+import sleep2 from '@/assets/sleep2.png';
+
 import eventBus from '@/eventBus';
 
 // Sounds
 import feedSound from '@/assets/sounds/feed.mp3';
 import playSound from '@/assets/sounds/play.wav';
 import cleanSound from '@/assets/sounds/clean.wav';
+import sleepSound from '@/assets/sounds/sleep.wav';
 import thresholdSound from '@/assets/sounds/threshold.wav';
 
 export default {
@@ -51,12 +56,14 @@ export default {
       eatingImages: [eat1, eat2, eat3, eat4],
       playingImages: [play1, play2],
       cleaningImages: [clean1, clean2, clean3, clean4, clean5],
+      sleepingImages: [sleep1, sleep2],
       currentImageIndex: 0,
       petImage: pet1,
       flipped: false,
       isEating: false,
       isPlaying: false,
       isCleaning: false,
+      isSleeping: false,
       animationInterval: null,
       movementInterval: null,
       position: -900, // Added to keep track of position
@@ -64,11 +71,17 @@ export default {
       feedAudio: new Audio(feedSound),
       playAudio: new Audio(playSound),
       cleanAudio: new Audio(cleanSound),
+      sleepAudio: new Audio(sleepSound),
       thresholdAudio: new Audio(thresholdSound),
       notificationMessage: '',
     };
   },
   watch: {
+    'pet.energy'(newVal) {
+      if (newVal === 0 && !this.isSleeping) {
+        this.startSleeping();
+      }
+    },
     'pet.hunger'(newVal) {
       if (newVal === 0) {
         this.$refs.notification.showNotification('Your pet is very hungry!');
@@ -93,6 +106,7 @@ export default {
     this.startHungerTimer();
     this.startHappinessTimer();
     this.startCleanlinessTimer();
+    this.startEnergyTimer();
   },
   beforeUnmount() {
     eventBus.$off('feedPet', this.handleFeed); // Remove event listener
@@ -103,13 +117,16 @@ export default {
     clearInterval(this.hungerInterval);
     clearInterval(this.happinessInterval);
     clearInterval(this.cleanlinessInterval);
+    clearInterval(this.energyInterval);
   },
   methods: {
     ...mapActions(['feedPet']),
     ...mapActions(['playWithPet']),
     ...mapActions(['cleanPet']),
+    ...mapActions(['decreaseEnergy']),
+    ...mapActions(['increaseEnergy']),
     startWalkingAnimation() {
-      console.log('Walking animation started');
+      // console.log('Walking animation started');
       clearInterval(this.animationInterval); // Ensure any previous interval is cleared
       this.animationInterval = setInterval(() => {
         this.currentImageIndex = (this.currentImageIndex + 1) % this.walkingImages.length;
@@ -194,6 +211,11 @@ export default {
     },
     startCleanlinessTimer() {
       this.cleanlinessInterval = setInterval(() => {
+        this.decreaseEnergy();
+      }, 1000); // Decrease energy every 15 seconds
+    },
+    startEnergyTimer() {
+      this.energyInterval = setInterval(() => {
         this.decreaseCleanliness();
       }, 1500); // Decrease cleanliness every 15 seconds
     },
@@ -205,6 +227,9 @@ export default {
     },
     decreaseCleanliness() {
       this.$store.dispatch('decreaseCleanliness');
+    },
+    decreaseEnergy() {
+      this.$store.dispatch('decreaseEnergy');
     },
     handleFeed() {
       console.log('handleFeed called');
