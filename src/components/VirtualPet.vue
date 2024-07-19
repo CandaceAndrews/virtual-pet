@@ -80,6 +80,8 @@ export default {
     'pet.energy'(newVal) {
       if (newVal === 0 && !this.isSleeping) {
         this.startSleeping();
+      } else if (newVal === 100 && this.isSleeping) {
+        this.stopSleeping();
       }
     },
     'pet.hunger'(newVal) {
@@ -182,6 +184,26 @@ export default {
         this.startWalkingAnimation(); // Resume walking animation
       }, 2000);
     },
+    startSleeping() {
+      this.isSleeping = true;
+      clearInterval(this.animationInterval); // Stop other animations
+      clearInterval(this.movementInterval); // Stop movement
+      this.currentImageIndex = 0;
+      this.animationInterval = setInterval(() => {
+        this.currentImageIndex = (this.currentImageIndex + 1) % this.sleepingImages.length;
+        this.petImage = this.sleepingImages[this.currentImageIndex];
+      }, 230);
+      this.sleepAudio.play(); 
+      this.energyInterval = setInterval(() => {
+        this.increaseEnergy();
+      }, 1500); // Refill energy every 1.5 seconds
+    },
+    stopSleeping() {
+      this.isSleeping = false;
+      clearInterval(this.animationInterval); // Stop sleeping animation
+      clearInterval(this.energyInterval); // Stop refilling energy
+      this.startWalkingAnimation();
+    },
     movePet() {
       const petElement = this.$el.querySelector('.pet-image');
       clearInterval(this.movementInterval); // Ensure any previous interval is cleared
@@ -212,12 +234,12 @@ export default {
     startCleanlinessTimer() {
       this.cleanlinessInterval = setInterval(() => {
         this.decreaseEnergy();
-      }, 1000); // Decrease energy every 15 seconds
+      }, 1000); // Decrease cleanliness every 15 seconds
     },
     startEnergyTimer() {
       this.energyInterval = setInterval(() => {
-        this.decreaseCleanliness();
-      }, 1500); // Decrease cleanliness every 15 seconds
+        this.decreaseEnergy();
+      }, 1500); // Decrease energy every 15 seconds
     },
     decreaseHunger() {
       this.$store.dispatch('decreaseHunger');

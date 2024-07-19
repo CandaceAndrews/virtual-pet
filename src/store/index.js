@@ -4,10 +4,10 @@ export default createStore({
   state: {
     pet: {
       name: 'Tyrannosaurus Rex',
-      hunger: 30,
+      hunger: 100,
       happiness: 100,
       cleanliness: 100,
-      energy: 100,
+      energy: 10,
     },
   },
   mutations: {
@@ -36,6 +36,8 @@ export default createStore({
       // console.log('Cleanliness stat decreased', state.pet.cleanliness);
     },
     decreaseEnergy(state) {
+      state.pet.energy = Math.max(state.pet.energy - 1, 0);
+      // console.log('Energy stat decreased', state.pet.energy);
       if (state.energy > 0) {
         state.energy -= 5;
       }
