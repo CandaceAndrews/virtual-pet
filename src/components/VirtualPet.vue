@@ -185,18 +185,20 @@ export default {
       }, 2000);
     },
     startSleeping() {
-      this.isSleeping = true;
-      clearInterval(this.animationInterval); // Stop other animations
-      clearInterval(this.movementInterval); // Stop movement
-      this.currentImageIndex = 0;
-      this.animationInterval = setInterval(() => {
-        this.currentImageIndex = (this.currentImageIndex + 1) % this.sleepingImages.length;
-        this.petImage = this.sleepingImages[this.currentImageIndex];
-      }, 230);
-      this.sleepAudio.play(); 
-      this.energyInterval = setInterval(() => {
-        this.increaseEnergy();
-      }, 1500); // Refill energy every 1.5 seconds
+      this.moveToCenter().then(() => {
+        this.isSleeping = true;
+        clearInterval(this.animationInterval); // Stop other animations
+        clearInterval(this.movementInterval); // Stop movement
+        this.currentImageIndex = 0;
+        this.animationInterval = setInterval(() => {
+          this.currentImageIndex = (this.currentImageIndex + 1) % this.sleepingImages.length;
+          this.petImage = this.sleepingImages[this.currentImageIndex];
+        }, 230);
+        this.sleepAudio.play(); 
+        this.energyInterval = setInterval(() => {
+          this.increaseEnergy();
+        }, 1500); // Refill energy every 1.5 seconds
+      });
     },
     stopSleeping() {
       this.isSleeping = false;
@@ -220,6 +222,37 @@ export default {
           petElement.style.left = `${this.position}px`;
         }
       }, 40);
+    },
+    moveToCenter() {
+      return new Promise((resolve) => {
+        const petElement = this.$el.querySelector('.pet-image');
+        clearInterval(this.movementInterval); // Ensure any previous interval is cleared
+
+        // Calculate the center position of the screen
+        const centerPosition = (window.innerWidth - petElement.clientWidth) / 2;
+
+        // Start walking animation while moving to the center
+        this.startWalkingAnimation();
+
+        this.movementInterval = setInterval(() => {
+          if (this.position < centerPosition) {
+            this.direction = 1;
+            this.flipped = false;
+          } else if (this.position > centerPosition) {
+            this.direction = -1;
+            this.flipped = true;
+          }
+
+          this.position += 5 * this.direction;
+          petElement.style.left = `${this.position}px`;
+
+          // If pet is within 5px of center, stop the movement and resolve
+          if (Math.abs(this.position - centerPosition) <= 5) {
+            clearInterval(this.movementInterval);
+            resolve();
+          }
+        }, 40);
+      });
     },
     startHungerTimer() {
       this.hungerInterval = setInterval(() => {

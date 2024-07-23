@@ -7,7 +7,7 @@ export default createStore({
       hunger: 100,
       happiness: 100,
       cleanliness: 100,
-      energy: 10,
+      energy: 35,
     },
   },
   mutations: {
