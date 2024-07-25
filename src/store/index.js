@@ -4,36 +4,50 @@ export default createStore({
   state: {
     pet: {
       name: 'Tyrannosaurus Rex',
-      hunger: 30,
+      hunger: 100,
       happiness: 100,
       cleanliness: 100,
+      energy: 20,
     },
   },
   mutations: {
     feedPet(state) {
       state.pet.hunger = Math.min(state.pet.hunger + 10, 100);
-      console.log('Hunger stat increased', state.pet.happiness);
+      // console.log('Hunger stat increased', state.pet.happiness);
     },
     playWithPet(state) {
       state.pet.happiness = Math.min(state.pet.happiness + 10, 100);
-      console.log('Happiness stat increased', state.pet.happiness);
+      // console.log('Happiness stat increased', state.pet.happiness);
     },
     cleanPet(state) {
       state.pet.cleanliness = Math.min(state.pet.cleanliness + 10, 100);
-      console.log('Cleanliness  stat increased', state.pet.cleanliness);
+      // console.log('Cleanliness  stat increased', state.pet.cleanliness);
     },
     decreaseHunger(state) {
       state.pet.hunger = Math.max(state.pet.hunger - 1, 0);
-      console.log('Hunger stat decreased', state.pet.happiness);
+      // console.log('Hunger stat decreased', state.pet.happiness);
     },
     decreaseHappiness(state) {
       state.pet.happiness = Math.max(state.pet.happiness - 1, 0);
-      console.log('Happiness stat decreased', state.pet.happiness);
+      // console.log('Happiness stat decreased', state.pet.happiness);
     },
     decreaseCleanliness(state) {
       state.pet.cleanliness = Math.max(state.pet.cleanliness - 1, 0);
-      console.log('Cleanliness stat decreased', state.pet.cleanliness);
-    }
+      // console.log('Cleanliness stat decreased', state.pet.cleanliness);
+    },
+    decreaseEnergy(state) {
+      state.pet.energy = Math.max(state.pet.energy - 1, 0);
+      // console.log('Energy stat decreased', state.pet.energy);
+      if (state.energy > 0) {
+        state.energy -= 5;
+      }
+    },
+    increaseEnergy(state) {
+      state.pet.energy = Math.min(state.pet.energy + 15, 100);
+    },
+    setEnergy(state, value) {
+      state.energy = value;
+    },
   },
   actions: {
     feedPet({ commit }) {
@@ -54,6 +68,15 @@ export default createStore({
     decreaseCleanliness({ commit }) {
       commit('decreaseCleanliness');
     },
+    decreaseEnergy({ commit }) {
+      commit('decreaseEnergy');
+    },
+    increaseEnergy({ commit }) {
+      commit('increaseEnergy');
+    },
+    setEnergy({ commit }) {
+      commit('setEnergy');
+    },
   },
   getters: {
     pet(state) {
@@ -61,4 +84,3 @@ export default createStore({
     },
   },
 });
-

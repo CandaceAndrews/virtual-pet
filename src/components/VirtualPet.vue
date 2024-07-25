@@ -8,6 +8,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import NotificationAlert from './NotificationAlert.vue';
+import eventBus from '@/eventBus';
 
 // Walking Images
 import pet1 from '@/assets/pet1.png';
@@ -29,12 +30,15 @@ import clean3 from '@/assets/clean3.png';
 import clean4 from '@/assets/clean4.png';
 import clean5 from '@/assets/clean5.png';
 
-import eventBus from '@/eventBus';
+// Sleep Images
+import sleep1 from '@/assets/sleep1.png';
+import sleep2 from '@/assets/sleep2.png';
 
 // Sounds
 import feedSound from '@/assets/sounds/feed.mp3';
 import playSound from '@/assets/sounds/play.wav';
 import cleanSound from '@/assets/sounds/clean.wav';
+import sleepSound from '@/assets/sounds/sleep.wav';
 import thresholdSound from '@/assets/sounds/threshold.wav';
 
 export default {
@@ -44,6 +48,9 @@ export default {
   },
   computed: {
     ...mapGetters(['pet']),
+    energyPercentage() {
+      return this.pet.energy;
+    }
   },
   data() {
     return {
@@ -51,12 +58,14 @@ export default {
       eatingImages: [eat1, eat2, eat3, eat4],
       playingImages: [play1, play2],
       cleaningImages: [clean1, clean2, clean3, clean4, clean5],
+      sleepingImages: [sleep1, sleep2],
       currentImageIndex: 0,
       petImage: pet1,
       flipped: false,
       isEating: false,
       isPlaying: false,
       isCleaning: false,
+      isSleeping: false,
       animationInterval: null,
       movementInterval: null,
       position: -900, // Added to keep track of position
@@ -64,11 +73,20 @@ export default {
       feedAudio: new Audio(feedSound),
       playAudio: new Audio(playSound),
       cleanAudio: new Audio(cleanSound),
+      sleepAudio: new Audio(sleepSound),
       thresholdAudio: new Audio(thresholdSound),
       notificationMessage: '',
     };
   },
   watch: {
+    'pet.energy'(newVal) {
+      if (newVal === 0 && !this.isSleeping) {
+        this.startSleeping();
+        this.$refs.notification.showNotification('Your pet is sleeping!');
+      } else if (newVal === 100 && this.isSleeping) {
+        this.stopSleeping();
+      }
+    },
     'pet.hunger'(newVal) {
       if (newVal === 0) {
         this.$refs.notification.showNotification('Your pet is very hungry!');
@@ -93,6 +111,7 @@ export default {
     this.startHungerTimer();
     this.startHappinessTimer();
     this.startCleanlinessTimer();
+    this.startEnergyTimer();
   },
   beforeUnmount() {
     eventBus.$off('feedPet', this.handleFeed); // Remove event listener
@@ -103,13 +122,16 @@ export default {
     clearInterval(this.hungerInterval);
     clearInterval(this.happinessInterval);
     clearInterval(this.cleanlinessInterval);
+    clearInterval(this.energyInterval);
   },
   methods: {
     ...mapActions(['feedPet']),
     ...mapActions(['playWithPet']),
     ...mapActions(['cleanPet']),
+    ...mapActions(['decreaseEnergy']),
+    ...mapActions(['increaseEnergy']),
+
     startWalkingAnimation() {
-      console.log('Walking animation started');
       clearInterval(this.animationInterval); // Ensure any previous interval is cleared
       this.animationInterval = setInterval(() => {
         this.currentImageIndex = (this.currentImageIndex + 1) % this.walkingImages.length;
@@ -117,8 +139,8 @@ export default {
       }, 230);
       this.movePet();
     },
+
     startEatingAnimation() {
-      // console.log('Eating animation started');
       this.isEating = true;
       clearInterval(this.animationInterval); // Stop walking animation
       clearInterval(this.movementInterval); // Stop movement animation
@@ -133,8 +155,8 @@ export default {
         this.startWalkingAnimation(); // Resume walking animation
       }, 2000);
     },
+
     startPlayAnimation() {
-      // console.log('Play animation started');
       this.isPlaying = true;
       clearInterval(this.animationInterval); // Stop walking animation
       clearInterval(this.movementInterval); // Stop movement animation
@@ -149,8 +171,8 @@ export default {
         this.startWalkingAnimation(); // Resume walking animation
       }, 2000);
     },
+
     startCleaningAnimation() {
-      // console.log('Cleaning animation started');
       this.isCleaning = true;
       clearInterval(this.animationInterval); // Stop walking animation
       clearInterval(this.movementInterval); // Stop movement animation
@@ -165,6 +187,33 @@ export default {
         this.startWalkingAnimation(); // Resume walking animation
       }, 2000);
     },
+
+    increaseEnergy() {
+      this.$store.dispatch('increaseEnergy');
+    },
+
+    startSleeping() {
+      this.isSleeping = true;
+      clearInterval(this.animationInterval); // Stop other animations
+      clearInterval(this.movementInterval); // Stop movement
+      this.currentImageIndex = 0;
+      this.animationInterval = setInterval(() => {
+        this.currentImageIndex = (this.currentImageIndex + 1) % this.sleepingImages.length;
+        this.petImage = this.sleepingImages[this.currentImageIndex];
+      }, 230);
+      this.sleepAudio.play(); 
+      this.energyInterval = setInterval(() => {
+        this.increaseEnergy();
+      }, 1500); // Refill energy every 1.5 seconds
+    },
+
+    stopSleeping() {
+      this.isSleeping = false;
+      clearInterval(this.animationInterval); // Stop sleeping animation
+      clearInterval(this.energyInterval); // Stop refilling energy
+      this.startWalkingAnimation();
+    },
+
     movePet() {
       const petElement = this.$el.querySelector('.pet-image');
       clearInterval(this.movementInterval); // Ensure any previous interval is cleared
@@ -182,21 +231,31 @@ export default {
         }
       }, 40);
     },
+
     startHungerTimer() {
       this.hungerInterval = setInterval(() => {
         this.decreaseHunger();
       }, 2000); // Decrease hunger every 2 seconds
     },
+
     startHappinessTimer() {
       this.happinessInterval = setInterval(() => {
         this.decreaseHappiness();
       }, 15000); // Decrease happiness every 15 seconds
     },
+
     startCleanlinessTimer() {
       this.cleanlinessInterval = setInterval(() => {
         this.decreaseCleanliness();
-      }, 1500); // Decrease cleanliness every 15 seconds
+      }, 1000); // Decrease cleanliness every 15 seconds
     },
+
+    startEnergyTimer() {
+      this.energyInterval = setInterval(() => {
+        this.decreaseEnergy();
+      }, 1500); // Decrease energy every 15 seconds
+    },
+
     decreaseHunger() {
       this.$store.dispatch('decreaseHunger');
     },
@@ -206,6 +265,10 @@ export default {
     decreaseCleanliness() {
       this.$store.dispatch('decreaseCleanliness');
     },
+    decreaseEnergy() {
+      this.$store.dispatch('decreaseEnergy');
+    },
+
     handleFeed() {
       console.log('handleFeed called');
       this.feedAudio.play(); 
@@ -224,6 +287,7 @@ export default {
       this.cleanPet(); //Trigger Vuex action to update cleanliness
       this.startCleaningAnimation(); 
     },
+    
     onDrop(event) {
       const action = event.dataTransfer.getData('action');
       if (action === 'feed') {
@@ -258,4 +322,3 @@ export default {
   transform: scaleX(-1);
 }
 </style>
-

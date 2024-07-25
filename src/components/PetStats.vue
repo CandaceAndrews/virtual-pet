@@ -23,6 +23,13 @@
         <div class="progress-bar" :style="{ width: cleanlinessPercentage + '%' }"></div>
       </div>
     </div>
+    <!-- ENERGY BAR -->
+    <div class="bar">
+      <span>Energy</span>
+      <div class="progress">
+        <div class="progress-bar" :style="{ width: energyPercentage + '%' }"></div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -41,6 +48,9 @@ export default {
     },
     cleanlinessPercentage() {
       return this.pet.cleanliness;
+    },
+    energyPercentage() {
+      return this.pet.energy;
     },
   }
 };
