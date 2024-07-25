@@ -7,7 +7,7 @@ export default createStore({
       hunger: 100,
       happiness: 100,
       cleanliness: 100,
-      energy: 10,
+      energy: 20,
     },
   },
   mutations: {
@@ -29,7 +29,7 @@ export default createStore({
     },
     decreaseHappiness(state) {
       state.pet.happiness = Math.max(state.pet.happiness - 1, 0);
-      console.log('Happiness stat decreased', state.pet.happiness);
+      // console.log('Happiness stat decreased', state.pet.happiness);
     },
     decreaseCleanliness(state) {
       state.pet.cleanliness = Math.max(state.pet.cleanliness - 1, 0);
@@ -43,9 +43,7 @@ export default createStore({
       }
     },
     increaseEnergy(state) {
-      if (state.energy < 100) {
-        state.energy += 5;
-      }
+      state.pet.energy = Math.min(state.pet.energy + 15, 100);
     },
     setEnergy(state, value) {
       state.energy = value;
@@ -86,4 +84,3 @@ export default createStore({
     },
   },
 });
-
