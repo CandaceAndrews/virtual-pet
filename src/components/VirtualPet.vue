@@ -194,6 +194,7 @@ export default {
 
     startSleeping() {
       this.isSleeping = true;
+      this.$store.dispatch('startSleeping');
       clearInterval(this.animationInterval); // Stop other animations
       clearInterval(this.movementInterval); // Stop movement
       this.currentImageIndex = 0;
@@ -209,6 +210,7 @@ export default {
 
     stopSleeping() {
       this.isSleeping = false;
+      this.$store.dispatch('stopSleeping');
       clearInterval(this.animationInterval); // Stop sleeping animation
       clearInterval(this.energyInterval); // Stop refilling energy
       this.startWalkingAnimation();

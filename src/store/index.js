@@ -8,6 +8,7 @@ export default createStore({
       happiness: 100,
       cleanliness: 100,
       energy: 20,
+      isSleeping: false,
     },
   },
   mutations: {
@@ -48,6 +49,12 @@ export default createStore({
     setEnergy(state, value) {
       state.energy = value;
     },
+    startSleeping(state) {
+      state.pet.isSleeping = true;
+    },
+    stopSleeping(state) {
+      state.pet.isSleeping = false;
+    },
   },
   actions: {
     feedPet({ commit }) {
@@ -76,6 +83,12 @@ export default createStore({
     },
     setEnergy({ commit }) {
       commit('setEnergy');
+    },
+    startSleeping({ commit }) { 
+      commit('startSleeping');
+    },
+    stopSleeping({ commit }) { 
+      commit('stopSleeping');
     },
   },
   getters: {

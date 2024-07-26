@@ -6,6 +6,7 @@
       class="draggable"
       id="food"
       @dragstart="onDragStart($event, 'feed')"
+      :draggable="!isPetSleeping"
     />
     <img
       src="@/assets/toy.png"
@@ -13,6 +14,7 @@
       class="draggable"
       id="play"
       @dragstart="onDragStart($event, 'play')"
+      :draggable="!isPetSleeping"
     />
   <img
       src="@/assets/clean.png"
@@ -20,6 +22,7 @@
       class="draggable"
       id="clean"
       @dragstart="onDragStart($event, 'clean')"
+      :draggable="!isPetSleeping"
     />
   </div>
 </template>
@@ -27,9 +30,17 @@
 <script>
 export default {
   name: 'PetActions',
+  computed: {
+    ...mapState([pet]),
+    isPetSleeping() {
+      return this.pet.isSleeping;
+    }
+  },
   methods: {
     onDragStart(event, action) {
-      event.dataTransfer.setData('action', action);
+      if (!this.isPetSleeping) {
+        event.dataTransfer.setData('action', action);
+      }
     }
   }
 };

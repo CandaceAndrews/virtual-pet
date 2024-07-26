@@ -19,7 +19,7 @@ export default {
       this.visible = true;
       setTimeout(() => {
         this.visible = false;
-      }, 3000);
+      }, 5000);
     },
   },
 };
