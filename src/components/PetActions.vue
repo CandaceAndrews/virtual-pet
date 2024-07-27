@@ -1,21 +1,21 @@
 <template>
   <div class="pet-actions">
     <img
-      src="@/assets/food.png"
+      src="@/assets/icons/food.png"
       alt="Food"
       class="draggable"
       id="food"
       @dragstart="onDragStart($event, 'feed')"
     />
     <img
-      src="@/assets/toy.png"
+      src="@/assets/icons/toy.png"
       alt="Toy"
       class="draggable"
       id="play"
       @dragstart="onDragStart($event, 'play')"
     />
   <img
-      src="@/assets/clean.png"
+      src="@/assets/icons/clean.png"
       alt="Brush"
       class="draggable"
       id="clean"
