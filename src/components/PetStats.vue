@@ -1,7 +1,15 @@
 <template>
   <div class="pet-stats">
     <!-- NAME -->
-    <h1 class="name">{{ pet.name }}</h1>
+    <!-- <h1 class="name">{{ pet.name }}</h1> -->
+
+    <!-- LIFE BAR -->
+    <div class="bar">
+      <span>Life</span>
+      <div class="progress">
+        <div class="progress-bar" :style="{ width: lifePercentage + '%' }"></div>
+      </div>
+    </div>
     <!-- HUNGER BAR -->
     <div class="bar">
       <span>Hunger</span>
@@ -40,6 +48,9 @@ export default {
   name: 'PetStats',
   computed: {
     ...mapGetters(['pet']),
+    lifePercentage() {
+      return this.pet.life;
+    },
     hungerPercentage() {
       return this.pet.hunger;
     },
@@ -62,10 +73,10 @@ export default {
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 20%;
+  width: 10%;
   height: auto;
-  max-width: 300px; /* Maximum width to maintain layout */
-  min-width: 200px; /* Minimum width for smaller screens */
+  max-width: 200px; /* Maximum width to maintain layout */
+  min-width: 100px; /* Minimum width for smaller screens */
   position: absolute;
   left: 20px; /* Position to the left of the screen */
   top: 20px; /* Add some margin from the top */
@@ -85,7 +96,7 @@ export default {
 
 .progress {
   width: 100%;
-  height: 20px;
+  height: 10px;
   background-color: #e64a4a;
   border-radius: 10px;
   overflow: hidden;
