@@ -12,7 +12,7 @@ export default {
 
 <style scoped>
 .background {
-  background-image: url('@/assets/bg.png');
+  background-image: url('@/assets/images/bg.png');
   background-size: cover;
   background-position: center;
   width: auto;

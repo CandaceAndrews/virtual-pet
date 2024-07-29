@@ -8,41 +8,42 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import NotificationAlert from './NotificationAlert.vue';
+import { audioMixin } from '@/mixins/audioMixin.js';
 import eventBus from '@/eventBus';
 
 // Walking Images
-import pet1 from '@/assets/pet1.png';
-import pet2 from '@/assets/pet2.png';
-import pet3 from '@/assets/pet3.png';
-import pet4 from '@/assets/pet4.png';
+import walk1 from '@/assets/images/walkImages/walk1.png';
+import walk2 from '@/assets/images/walkImages/walk2.png';
+import walk3 from '@/assets/images/walkImages/walk3.png';
+import walk4 from '@/assets/images/walkImages/walk4.png';
 // Eating Images
-import eat1 from '@/assets/eat1.png';
-import eat2 from '@/assets/eat2.png';
-import eat3 from '@/assets/eat3.png';
-import eat4 from '@/assets/eat4.png';
+import eat1 from '@/assets/images/eatImages/eat1.png';
+import eat2 from '@/assets/images/eatImages/eat2.png';
+import eat3 from '@/assets/images/eatImages/eat3.png';
+import eat4 from '@/assets/images/eatImages/eat4.png';
 // Play Images
-import play1 from '@/assets/play1.png';
-import play2 from '@/assets/play2.png';
+import play1 from '@/assets/images/playImages/play1.png';
+import play2 from '@/assets/images/playImages/play2.png';
 // Clean Images
-import clean1 from '@/assets/clean1.png';
-import clean2 from '@/assets/clean2.png';
-import clean3 from '@/assets/clean3.png';
-import clean4 from '@/assets/clean4.png';
-import clean5 from '@/assets/clean5.png';
+import clean1 from '@/assets/images/cleanImages/clean1.png';
+import clean2 from '@/assets/images/cleanImages/clean2.png';
+import clean3 from '@/assets/images/cleanImages/clean3.png';
+import clean4 from '@/assets/images/cleanImages/clean4.png';
+import clean5 from '@/assets/images/cleanImages/clean5.png';
 
 // Sleep Images
-import sleep1 from '@/assets/sleep1.png';
-import sleep2 from '@/assets/sleep2.png';
+import sleep1 from '@/assets/images/sleepImages/sleep1.png';
+import sleep2 from '@/assets/images/sleepImages/sleep2.png';
 
 // Sounds
 import feedSound from '@/assets/sounds/feed.mp3';
 import playSound from '@/assets/sounds/play.wav';
 import cleanSound from '@/assets/sounds/clean.wav';
 import sleepSound from '@/assets/sounds/sleep.wav';
-import thresholdSound from '@/assets/sounds/threshold.wav';
 
 export default {
   name: 'VirtualPet',
+  mixins: [audioMixin],
   components: {
     NotificationAlert,
   },
@@ -54,13 +55,13 @@ export default {
   },
   data() {
     return {
-      walkingImages: [pet1, pet2, pet3, pet4],
+      walkingImages: [walk1, walk2, walk3, walk4],
       eatingImages: [eat1, eat2, eat3, eat4],
       playingImages: [play1, play2],
       cleaningImages: [clean1, clean2, clean3, clean4, clean5],
       sleepingImages: [sleep1, sleep2],
       currentImageIndex: 0,
-      petImage: pet1,
+      petImage: walk1,
       flipped: false,
       isEating: false,
       isPlaying: false,
@@ -70,11 +71,6 @@ export default {
       movementInterval: null,
       position: -900, // Added to keep track of position
       direction: 1, // Added to keep track of direction
-      feedAudio: new Audio(feedSound),
-      playAudio: new Audio(playSound),
-      cleanAudio: new Audio(cleanSound),
-      sleepAudio: new Audio(sleepSound),
-      thresholdAudio: new Audio(thresholdSound),
       notificationMessage: '',
     };
   },
@@ -125,11 +121,22 @@ export default {
     clearInterval(this.energyInterval);
   },
   methods: {
-    ...mapActions(['feedPet']),
-    ...mapActions(['playWithPet']),
-    ...mapActions(['cleanPet']),
-    ...mapActions(['decreaseEnergy']),
-    ...mapActions(['increaseEnergy']),
+    ...mapActions(['feedPet', 'playWithPet', 'cleanPet', 'decreaseEnergy', 'increaseEnergy']),
+
+    startAnimation(images, duration, callback) {
+      clearInterval(this.animationInterval);
+      clearInterval(this.movementInterval);
+      this.currentImageIndex = 0;
+      this.animationInterval = setInterval(() => {
+        this.currentImageIndex = (this.currentImageIndex + 1) % images.length;
+        this.petImage = images[this.currentImageIndex];
+      }, 230);
+      setTimeout(() => {
+        clearInterval(this.animationInterval);
+        this.startWalkingAnimation();
+        if (callback) callback();
+      }, duration);
+    },
 
     startWalkingAnimation() {
       clearInterval(this.animationInterval); // Ensure any previous interval is cleared
@@ -138,58 +145,6 @@ export default {
         this.petImage = this.walkingImages[this.currentImageIndex];
       }, 230);
       this.movePet();
-    },
-
-    startEatingAnimation() {
-      this.isEating = true;
-      clearInterval(this.animationInterval); // Stop walking animation
-      clearInterval(this.movementInterval); // Stop movement animation
-      this.currentImageIndex = 0;
-      this.animationInterval = setInterval(() => {
-        this.currentImageIndex = (this.currentImageIndex + 1) % this.eatingImages.length;
-        this.petImage = this.eatingImages[this.currentImageIndex];
-      }, 230);
-      setTimeout(() => {
-        this.isEating = false;
-        clearInterval(this.animationInterval);
-        this.startWalkingAnimation(); // Resume walking animation
-      }, 2000);
-    },
-
-    startPlayAnimation() {
-      this.isPlaying = true;
-      clearInterval(this.animationInterval); // Stop walking animation
-      clearInterval(this.movementInterval); // Stop movement animation
-      this.currentImageIndex = 0;
-      this.animationInterval = setInterval(() => {
-        this.currentImageIndex = (this.currentImageIndex + 1) % this.playingImages.length;
-        this.petImage = this.playingImages[this.currentImageIndex];
-      }, 230);
-      setTimeout(() => {
-        this.isPlaying = false;
-        clearInterval(this.animationInterval);
-        this.startWalkingAnimation(); // Resume walking animation
-      }, 2000);
-    },
-
-    startCleaningAnimation() {
-      this.isCleaning = true;
-      clearInterval(this.animationInterval); // Stop walking animation
-      clearInterval(this.movementInterval); // Stop movement animation
-      this.currentImageIndex = 0;
-      this.animationInterval = setInterval(() => {
-        this.currentImageIndex = (this.currentImageIndex + 1) % this.cleaningImages.length;
-        this.petImage = this.cleaningImages[this.currentImageIndex];
-      }, 230);
-      setTimeout(() => {
-        this.isCleaning = false;
-        clearInterval(this.animationInterval);
-        this.startWalkingAnimation(); // Resume walking animation
-      }, 2000);
-    },
-
-    increaseEnergy() {
-      this.$store.dispatch('increaseEnergy');
     },
 
     startSleeping() {
@@ -201,7 +156,7 @@ export default {
         this.currentImageIndex = (this.currentImageIndex + 1) % this.sleepingImages.length;
         this.petImage = this.sleepingImages[this.currentImageIndex];
       }, 230);
-      this.sleepAudio.play(); 
+      this.playAudio(sleepSound); 
       this.energyInterval = setInterval(() => {
         this.increaseEnergy();
       }, 1500); // Refill energy every 1.5 seconds
@@ -232,6 +187,7 @@ export default {
       }, 40);
     },
 
+    // Timers
     startHungerTimer() {
       this.hungerInterval = setInterval(() => {
         this.decreaseHunger();
@@ -269,23 +225,24 @@ export default {
       this.$store.dispatch('decreaseEnergy');
     },
 
+    increaseEnergy() {
+      this.$store.dispatch('increaseEnergy');
+    },
+
     handleFeed() {
-      console.log('handleFeed called');
-      this.feedAudio.play(); 
-      this.feedPet(); // Trigger Vuex action to update hunger
-      this.startEatingAnimation(); 
+      this.playAudio(feedSound); 
+      this.feedPet();
+      this.startAnimation(this.eatingImages, 3000);
     },
     handlePlay() {
-      console.log('handlePlay called');
-      this.playAudio.play(); 
-      this.playWithPet(); // Trigger Vuex action to update play
-      this.startPlayAnimation(); 
+      this.playAudio(playSound);
+      this.playWithPet();
+      this.startAnimation(this.playingImages, 3000);
     },
     handleClean() {
-      console.log('handleClean called');
-      this.cleanAudio.play(); 
-      this.cleanPet(); //Trigger Vuex action to update cleanliness
-      this.startCleaningAnimation(); 
+      this.playAudio(cleanSound); 
+      this.cleanPet();
+      this.startAnimation(this.cleaningImages, 3000);
     },
     
     onDrop(event) {
@@ -297,9 +254,10 @@ export default {
       } else if (action === 'clean') {
         this.handleClean();
       }
-    }
+    },
   },
 };
+
 </script>
 
 <style scoped>
