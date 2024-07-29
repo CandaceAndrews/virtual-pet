@@ -102,12 +102,13 @@ export default {
   mounted() {
     this.startWalkingAnimation();
     eventBus.$on('feedPet', this.handleFeed); // Listen for 'feedPet' event
-    eventBus.$on('playWithPet', this.handlePlay); // Listen for 'playWithPet' event
-    eventBus.$on('cleanPet', this.handleClean); // Listen for 'cleanPet'
+    eventBus.$on('playWithPet', this.handlePlay); 
+    eventBus.$on('cleanPet', this.handleClean); 
     this.startHungerTimer();
     this.startHappinessTimer();
     this.startCleanlinessTimer();
     this.startEnergyTimer();
+    this.startLifeTimer();
   },
   beforeUnmount() {
     eventBus.$off('feedPet', this.handleFeed); // Remove event listener
@@ -121,7 +122,7 @@ export default {
     clearInterval(this.energyInterval);
   },
   methods: {
-    ...mapActions(['feedPet', 'playWithPet', 'cleanPet', 'decreaseEnergy', 'increaseEnergy']),
+    ...mapActions(['feedPet', 'playWithPet', 'cleanPet', 'increaseEnergy', 'decreaseEnergy', 'increaseLife', 'decreaseLife']),
 
     startAnimation(images, duration, callback) {
       clearInterval(this.animationInterval);
@@ -173,7 +174,7 @@ export default {
       const petElement = this.$el.querySelector('.pet-image');
       clearInterval(this.movementInterval); // Ensure any previous interval is cleared
       this.movementInterval = setInterval(() => {
-        if (!this.isEating && !this.isPlaying) { // Ensure pet doesn't move during eating or playing
+        if (!this.isEating && !this.isPlaying && !this.isCleaning && !this.isSleeping) { // Ensure pet doesn't move during eating or playing
           if (this.direction === 1 && this.position >= window.innerWidth) {
             this.direction = -1;
             this.flipped = true;
@@ -197,19 +198,31 @@ export default {
     startHappinessTimer() {
       this.happinessInterval = setInterval(() => {
         this.decreaseHappiness();
-      }, 15000); // Decrease happiness every 15 seconds
+      }, 2000);
     },
 
     startCleanlinessTimer() {
       this.cleanlinessInterval = setInterval(() => {
         this.decreaseCleanliness();
-      }, 1000); // Decrease cleanliness every 15 seconds
+      }, 1000); 
     },
 
     startEnergyTimer() {
       this.energyInterval = setInterval(() => {
         this.decreaseEnergy();
-      }, 1500); // Decrease energy every 15 seconds
+      }, 1500);
+    },
+    
+    startLifeTimer() {
+      this.lifeInterval = setInterval(() => {
+        if (this.pet.hunger === 0 && this.pet.happiness === 0 && this.pet.cleanliness === 0) {
+          this.decreaseLife();
+        }
+      }, 1000) // Check every 1 second
+    },
+    
+    stopLifeTimer() {
+      clearInterval(this.lifeInterval);
     },
 
     decreaseHunger() {
