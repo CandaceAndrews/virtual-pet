@@ -2,6 +2,7 @@
   <div class="virtual-pet" @dragover.prevent @drop="onDrop">
     <img :src="petImage" :class="{ 'flipped': flipped }" alt="Virtual Pet" class="pet-image" />
     <NotificationAlert ref="notification" />
+    <button v-if="isDead" @click="handleRestart" class="restart-button">Restart</button>
   </div>
 </template>
 
@@ -30,10 +31,14 @@ import clean2 from '@/assets/images/cleanImages/clean2.png';
 import clean3 from '@/assets/images/cleanImages/clean3.png';
 import clean4 from '@/assets/images/cleanImages/clean4.png';
 import clean5 from '@/assets/images/cleanImages/clean5.png';
-
 // Sleep Images
 import sleep1 from '@/assets/images/sleepImages/sleep1.png';
 import sleep2 from '@/assets/images/sleepImages/sleep2.png';
+// Death Images
+import death1 from '@/assets/images/deathImages/death1.png';
+import death2 from '@/assets/images/deathImages/death2.png';
+import death3 from '@/assets/images/deathImages/death3.png';
+import death4 from '@/assets/images/deathImages/death4.png';
 
 // Sounds
 import feedSound from '@/assets/sounds/feed.mp3';
@@ -60,6 +65,7 @@ export default {
       playingImages: [play1, play2],
       cleaningImages: [clean1, clean2, clean3, clean4, clean5],
       sleepingImages: [sleep1, sleep2],
+      deathImages: [death1, death2, death3, death4],
       currentImageIndex: 0,
       petImage: walk1,
       flipped: false,
@@ -67,6 +73,7 @@ export default {
       isPlaying: false,
       isCleaning: false,
       isSleeping: false,
+      isDead: false,
       animationInterval: null,
       movementInterval: null,
       position: -900, // Added to keep track of position
@@ -98,6 +105,11 @@ export default {
         this.$refs.notification.showNotification('Your pet is very dirty!');
       }
     },
+    'pet.life'(newVal) {
+      if (newVal === 0 && !this.isDead) {
+        this.handleDeath();
+      }
+    },
   },
   mounted() {
     this.startWalkingAnimation();
@@ -120,9 +132,10 @@ export default {
     clearInterval(this.happinessInterval);
     clearInterval(this.cleanlinessInterval);
     clearInterval(this.energyInterval);
+    clearInterval(this.lifeInterval);
   },
   methods: {
-    ...mapActions(['feedPet', 'playWithPet', 'cleanPet', 'increaseEnergy', 'decreaseEnergy', 'increaseLife', 'decreaseLife']),
+    ...mapActions(['feedPet', 'playWithPet', 'cleanPet', 'increaseEnergy', 'decreaseEnergy', 'increaseLife', 'decreaseLife', 'resetPet']),
 
     startAnimation(images, duration, callback) {
       clearInterval(this.animationInterval);
@@ -257,6 +270,25 @@ export default {
       this.cleanPet();
       this.startAnimation(this.cleaningImages, 3000);
     },
+
+    handleDeath() {
+      this.isDead = true;
+      clearInterval(this.animationInterval);
+      clearInterval(this.movementInterval);
+      this.$refs.notification.showNotification('Your pet has died!');
+      this.startAnimation(this.deathImages, 3000);
+    },
+
+    handleRestart() {
+      this.resetPet();
+      this.isDead = false;
+      this.startWalkingAnimation();
+      this.startHungerTimer();
+      this.startHappinessTimer();
+      this.startCleanlinessTimer();
+      this.startEnergyTimer();
+      this.startLifeTimer();
+    },
     
     onDrop(event) {
       const action = event.dataTransfer.getData('action');
@@ -291,5 +323,24 @@ export default {
 
 .flipped {
   transform: scaleX(-1);
+}
+
+.restart-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #ff4a4a;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.restart-button:hover {
+  background-color: #ff0000;
 }
 </style>
