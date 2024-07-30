@@ -45,6 +45,13 @@ export default createStore({
     increaseEnergy(state) {
       state.pet.energy = Math.min(state.pet.energy + 15, 100);
     },
+    resetPet(state) {
+      state.pet.hunger = 100;
+      state.pet.happiness = 100;
+      state.pet.cleanliness = 100;
+      state.pet.energy = 20;
+      state.pet.life = 100;
+    },
   },
   actions: {
     feedPet({ commit }) {
@@ -76,6 +83,9 @@ export default createStore({
     },
     increaseLife({ commit }) {
       commit('increaseLife');
+    },
+    resetPet({ commit }) {
+      commit('resetPet');
     },
   },
   getters: {
