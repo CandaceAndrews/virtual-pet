@@ -27,9 +27,9 @@ export default {
 </script>
 
 <style scoped>
-/* .notifications {
+.notifications {
   position: fixed;
-  top: 20px;
+  top: 40px;
   right: 20px;
   display: flex;
   flex-direction: column;
@@ -45,24 +45,8 @@ export default {
   border: 1px solid #ffaa00;
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  margin-top: 30px;
   margin-bottom: 10px;
-} */
-
-.notifications {
-  position: fixed;
-  top: 20px;
-  right: 20px;
 }
 
-.notification {
-  position: absolute;
-  right: 0;
-  padding: 10px 20px;
-  margin-bottom: 10px;
-  background-color: #ffcc00;
-  border: 1px solid #ffaa00;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-  transition: top 0.3s ease-in-out;
-}
 </style>
