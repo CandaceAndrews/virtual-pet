@@ -44,7 +44,7 @@ import death4 from '@/assets/images/deathImages/death4.png';
 import feedSound from '@/assets/sounds/feed.mp3';
 import playSound from '@/assets/sounds/play.wav';
 import cleanSound from '@/assets/sounds/clean.wav';
-import sleepSound from '@/assets/sounds/sleep.wav';
+// import sleepSound from '@/assets/sounds/sleep.wav';
 
 export default {
   name: 'VirtualPet',
@@ -162,6 +162,7 @@ export default {
     },
 
     startSleeping() {
+      if (this.isDead) return;
       this.isSleeping = true;
       clearInterval(this.animationInterval); // Stop other animations
       clearInterval(this.movementInterval); // Stop movement
@@ -170,13 +171,14 @@ export default {
         this.currentImageIndex = (this.currentImageIndex + 1) % this.sleepingImages.length;
         this.petImage = this.sleepingImages[this.currentImageIndex];
       }, 230);
-      this.playAudio(sleepSound); 
+      // this.playAudio(sleepSound); 
       this.energyInterval = setInterval(() => {
         this.increaseEnergy();
       }, 1500); // Refill energy every 1.5 seconds
     },
 
     stopSleeping() {
+      if (this.isDead) return;
       this.isSleeping = false;
       clearInterval(this.animationInterval); // Stop sleeping animation
       clearInterval(this.energyInterval); // Stop refilling energy
@@ -231,7 +233,7 @@ export default {
         if (this.pet.hunger === 0 && this.pet.happiness === 0 && this.pet.cleanliness === 0) {
           this.decreaseLife();
         }
-      }, 1000) // Check every 1 second
+      }, 1000); // Check every 1 second
     },
     
     stopLifeTimer() {
@@ -248,10 +250,12 @@ export default {
       this.$store.dispatch('decreaseCleanliness');
     },
     decreaseEnergy() {
+      if (this.isDead) return;
       this.$store.dispatch('decreaseEnergy');
     },
 
     increaseEnergy() {
+      if (this.isDead) return;
       this.$store.dispatch('increaseEnergy');
     },
 
@@ -275,11 +279,18 @@ export default {
       this.isDead = true;
       clearInterval(this.animationInterval);
       clearInterval(this.movementInterval);
+      clearInterval(this.energyInterval);
       this.$refs.notification.showNotification('Your pet has died!');
-      this.startAnimation(this.deathImages, 3000);
+      
+      // Start continuous death animation
+      this.animationInterval = setInterval(() => {
+        this.currentImageIndex = (this.currentImageIndex + 1) % this.deathImages.length;
+        this.petImage = this.deathImages[this.currentImageIndex];
+      }, 230); // 230 milliseconds between each frame of the death animation
     },
 
     handleRestart() {
+      clearInterval(this.animationInterval);
       this.resetPet();
       this.isDead = false;
       this.startWalkingAnimation();
@@ -302,7 +313,6 @@ export default {
     },
   },
 };
-
 </script>
 
 <style scoped>
