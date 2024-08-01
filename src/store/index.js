@@ -49,7 +49,7 @@ export default createStore({
       state.pet.hunger = 100;
       state.pet.happiness = 100;
       state.pet.cleanliness = 100;
-      state.pet.energy = 20;
+      state.pet.energy = 100;
       state.pet.life = 100;
     },
   },

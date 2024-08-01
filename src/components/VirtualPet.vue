@@ -189,7 +189,7 @@ export default {
       const petElement = this.$el.querySelector('.pet-image');
       clearInterval(this.movementInterval); // Ensure any previous interval is cleared
       this.movementInterval = setInterval(() => {
-        if (!this.isEating && !this.isPlaying && !this.isCleaning && !this.isSleeping) { // Ensure pet doesn't move during eating or playing
+        if (!this.isEating && !this.isPlaying && !this.isCleaning && !this.isSleeping && !this.isDead) { // Ensure pet doesn't move during eating or playing
           if (this.direction === 1 && this.position >= window.innerWidth) {
             this.direction = -1;
             this.flipped = true;
