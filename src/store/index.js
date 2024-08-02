@@ -32,9 +32,6 @@ export default createStore({
     },
     decreaseEnergy(state) {
       state.pet.energy = Math.max(state.pet.energy - 1, 0);
-      if (state.energy > 0) {
-        state.energy -= 5;
-      }
     },
     decreaseLife(state) {
       state.pet.life = Math.max(state.pet.life - 1, 0);

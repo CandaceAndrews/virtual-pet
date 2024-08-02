@@ -1,14 +1,17 @@
 <template>
-  <div class="virtual-pet" @dragover.prevent @drop="onDrop">
-    <img :src="petImage" :class="{ 'flipped': flipped }" alt="Virtual Pet" class="pet-image" />
-    <NotificationAlert ref="notification" />
-    <button v-if="isDead" @click="handleRestart" class="restart-button">Restart</button>
-  </div>
+  <AppBackground :isDead="isDead">
+    <div class="virtual-pet" @dragover.prevent @drop="onDrop">
+      <img :src="petImage" :class="{ 'flipped': flipped }" alt="Virtual Pet" class="pet-image" />
+      <NotificationAlert ref="notification" />
+      <button v-if="isDead" @click="handleRestart" class="restart-button">Restart</button>
+    </div>
+  </AppBackground>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import NotificationAlert from './NotificationAlert.vue';
+import AppBackground from './AppBackground.vue';
 import { audioMixin } from '@/mixins/audioMixin.js';
 import eventBus from '@/eventBus';
 
@@ -44,13 +47,13 @@ import death4 from '@/assets/images/deathImages/death4.png';
 import feedSound from '@/assets/sounds/feed.mp3';
 import playSound from '@/assets/sounds/play.wav';
 import cleanSound from '@/assets/sounds/clean.wav';
-// import sleepSound from '@/assets/sounds/sleep.wav';
 
 export default {
   name: 'VirtualPet',
   mixins: [audioMixin],
   components: {
     NotificationAlert,
+    AppBackground,
   },
   computed: {
     ...mapGetters(['pet']),
@@ -171,7 +174,6 @@ export default {
         this.currentImageIndex = (this.currentImageIndex + 1) % this.sleepingImages.length;
         this.petImage = this.sleepingImages[this.currentImageIndex];
       }, 230);
-      // this.playAudio(sleepSound); 
       this.energyInterval = setInterval(() => {
         this.increaseEnergy();
       }, 1500); // Refill energy every 1.5 seconds
@@ -186,10 +188,11 @@ export default {
     },
 
     movePet() {
+      const speed = 5;
       const petElement = this.$el.querySelector('.pet-image');
-      clearInterval(this.movementInterval); // Ensure any previous interval is cleared
+      clearInterval(this.movementInterval);
       this.movementInterval = setInterval(() => {
-        if (!this.isEating && !this.isPlaying && !this.isCleaning && !this.isSleeping && !this.isDead) { // Ensure pet doesn't move during eating or playing
+        if (!this.isEating && !this.isPlaying && !this.isCleaning && !this.isSleeping && !this.isDead) { // Ensure pet doesn't move during these
           if (this.direction === 1 && this.position >= window.innerWidth) {
             this.direction = -1;
             this.flipped = true;
@@ -197,17 +200,17 @@ export default {
             this.direction = 1;
             this.flipped = false;
           }
-          this.position += 5 * this.direction;
+          this.position += speed * this.direction;
           petElement.style.left = `${this.position}px`;
         }
       }, 40);
     },
 
-    // Timers
+    // -- Timer Methods --
     startHungerTimer() {
       this.hungerInterval = setInterval(() => {
         this.decreaseHunger();
-      }, 2000); // Decrease hunger every 2 seconds
+      }, 2000); // Decrease every 2 seconds
     },
 
     startHappinessTimer() {
@@ -240,6 +243,7 @@ export default {
       clearInterval(this.lifeInterval);
     },
 
+    // -- Decrease - Increase Methods --
     decreaseHunger() {
       this.$store.dispatch('decreaseHunger');
     },
@@ -259,6 +263,7 @@ export default {
       this.$store.dispatch('increaseEnergy');
     },
 
+    // -- Handle Methods --
     handleFeed() {
       this.playAudio(feedSound); 
       this.feedPet();
@@ -301,6 +306,7 @@ export default {
       this.startLifeTimer();
     },
     
+    // -- Drop Methods --
     onDrop(event) {
       const action = event.dataTransfer.getData('action');
       if (action === 'feed') {
