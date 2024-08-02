@@ -265,19 +265,25 @@ export default {
 
     // -- Handle Methods --
     handleFeed() {
-      this.playAudio(feedSound); 
-      this.feedPet();
-      this.startAnimation(this.eatingImages, 3000);
+      if (!this.isDead) {
+        this.playAudio(feedSound);
+        this.feedPet();
+        this.startAnimation(this.eatingImages, 3000);
+      }
     },
     handlePlay() {
-      this.playAudio(playSound);
-      this.playWithPet();
-      this.startAnimation(this.playingImages, 3000);
+      if (!this.isDead) {
+        this.playAudio(playSound);
+        this.playWithPet();
+        this.startAnimation(this.playingImages, 3000);
+      }
     },
     handleClean() {
-      this.playAudio(cleanSound); 
-      this.cleanPet();
-      this.startAnimation(this.cleaningImages, 3000);
+      if (!this.isDead) {
+        this.playAudio(cleanSound); 
+        this.cleanPet();
+        this.startAnimation(this.cleaningImages, 3000);
+      }
     },
 
     handleDeath() {
