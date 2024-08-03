@@ -256,7 +256,7 @@ export default {
     
     startLifeTimer() {
       this.lifeInterval = setInterval(() => {
-        if (this.pet.hunger === 0 && this.pet.happiness === 0 && this.pet.cleanliness === 0) {
+        if (this.pet.hunger === 0 && this.pet.thirst === 0 && this.pet.happiness === 0 && this.pet.cleanliness === 0) {
           this.decreaseLife();
         }
       }, 1000); // Check every 1 second
@@ -291,6 +291,9 @@ export default {
 
     // -- Handle Methods --
     handleFeed() {
+      if (this.isSleeping) {
+        this.stopSleeping();
+      }
       if (!this.isDead) {
         this.playAudio(feedSound);
         this.feedPet();
@@ -298,6 +301,9 @@ export default {
       }
     },
     handleThirst() {
+      if (this.isSleeping) {
+        this.stopSleeping();
+      }
       if (!this.isDead) {
         this.playAudio(drinkSound);
         this.waterPet();
@@ -305,6 +311,9 @@ export default {
       }
     },
     handlePlay() {
+      if (this.isSleeping) {
+        this.stopSleeping();
+      }
       if (!this.isDead) {
         this.playAudio(playSound);
         this.playWithPet();
@@ -312,6 +321,9 @@ export default {
       }
     },
     handleClean() {
+      if (this.isSleeping) {
+        this.stopSleeping();
+      }
       if (!this.isDead) {
         this.playAudio(cleanSound); 
         this.cleanPet();
