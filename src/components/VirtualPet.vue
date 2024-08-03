@@ -15,16 +15,21 @@ import AppBackground from './AppBackground.vue';
 import { audioMixin } from '@/mixins/audioMixin.js';
 import eventBus from '@/eventBus';
 
-// Walking Images
+// Walk Images
 import walk1 from '@/assets/images/walkImages/walk1.png';
 import walk2 from '@/assets/images/walkImages/walk2.png';
 import walk3 from '@/assets/images/walkImages/walk3.png';
 import walk4 from '@/assets/images/walkImages/walk4.png';
-// Eating Images
+// Eat Images
 import eat1 from '@/assets/images/eatImages/eat1.png';
 import eat2 from '@/assets/images/eatImages/eat2.png';
 import eat3 from '@/assets/images/eatImages/eat3.png';
 import eat4 from '@/assets/images/eatImages/eat4.png';
+// Drink Images
+import drink1 from '@/assets/images/drinkImages/drink1.png';
+import drink2 from '@/assets/images/drinkImages/drink2.png';
+import drink3 from '@/assets/images/drinkImages/drink3.png';
+import drink4 from '@/assets/images/drinkImages/drink4.png';
 // Play Images
 import play1 from '@/assets/images/playImages/play1.png';
 import play2 from '@/assets/images/playImages/play2.png';
@@ -45,6 +50,7 @@ import death4 from '@/assets/images/deathImages/death4.png';
 
 // Sounds
 import feedSound from '@/assets/sounds/feed.mp3';
+import drinkSound from '@/assets/sounds/drink.wav';
 import playSound from '@/assets/sounds/play.wav';
 import cleanSound from '@/assets/sounds/clean.wav';
 
@@ -65,6 +71,7 @@ export default {
     return {
       walkingImages: [walk1, walk2, walk3, walk4],
       eatingImages: [eat1, eat2, eat3, eat4],
+      drinkinkimages: [drink1, drink2, drink3, drink4],
       playingImages: [play1, play2],
       cleaningImages: [clean1, clean2, clean3, clean4, clean5],
       sleepingImages: [sleep1, sleep2],
@@ -73,6 +80,7 @@ export default {
       petImage: walk1,
       flipped: false,
       isEating: false,
+      isDrinking: false,
       isPlaying: false,
       isCleaning: false,
       isSleeping: false,
@@ -98,6 +106,11 @@ export default {
         this.$refs.notification.showNotification('Your pet is very hungry!');
       }
     },
+    'pet.thirst'(newVal) {
+      if (newVal === 0) {
+        this.$refs.notification.showNotification('Your pet is very thirsty!');
+      }
+    },
     'pet.happiness'(newVal) {
       if (newVal === 0) {
         this.$refs.notification.showNotification('Your pet is very sad!');
@@ -117,9 +130,11 @@ export default {
   mounted() {
     this.startWalkingAnimation();
     eventBus.$on('feedPet', this.handleFeed); // Listen for 'feedPet' event
+    eventBus.$on('waterPet', this.handleWater);
     eventBus.$on('playWithPet', this.handlePlay); 
     eventBus.$on('cleanPet', this.handleClean); 
     this.startHungerTimer();
+    this.startThirstTimer();
     this.startHappinessTimer();
     this.startCleanlinessTimer();
     this.startEnergyTimer();
@@ -127,18 +142,20 @@ export default {
   },
   beforeUnmount() {
     eventBus.$off('feedPet', this.handleFeed); // Remove event listener
-    eventBus.$off('playWithPet', this.handlePlay); // Remove event listener
-    eventBus.$off('cleanPet', this.handleClean); // Remove event listener
+    eventBus.$off('waterPet', this.handleWater);
+    eventBus.$off('playWithPet', this.handlePlay); 
+    eventBus.$off('cleanPet', this.handleClean); 
     clearInterval(this.animationInterval);
     clearInterval(this.movementInterval);
     clearInterval(this.hungerInterval);
+    clearInterval(this.thirstInterval);
     clearInterval(this.happinessInterval);
     clearInterval(this.cleanlinessInterval);
     clearInterval(this.energyInterval);
     clearInterval(this.lifeInterval);
   },
   methods: {
-    ...mapActions(['feedPet', 'playWithPet', 'cleanPet', 'increaseEnergy', 'decreaseEnergy', 'increaseLife', 'decreaseLife', 'resetPet']),
+    ...mapActions(['feedPet', 'waterPet', 'playWithPet', 'cleanPet', 'increaseEnergy', 'decreaseEnergy', 'increaseLife', 'decreaseLife', 'resetPet']),
 
     startAnimation(images, duration, callback) {
       clearInterval(this.animationInterval);
@@ -213,6 +230,12 @@ export default {
       }, 2000); // Decrease every 2 seconds
     },
 
+    startThirstTimer() {
+      this.thirstInterval = setInterval(() => {
+        this.decreaseThirst();
+      }, 2000);
+    },
+
     startHappinessTimer() {
       this.happinessInterval = setInterval(() => {
         this.decreaseHappiness();
@@ -247,6 +270,9 @@ export default {
     decreaseHunger() {
       this.$store.dispatch('decreaseHunger');
     },
+    decreaseThirst() {
+      this.$store.dispatch('decreaseThirst');
+    },
     decreaseHappiness() {
       this.$store.dispatch('decreaseHappiness');
     },
@@ -269,6 +295,13 @@ export default {
         this.playAudio(feedSound);
         this.feedPet();
         this.startAnimation(this.eatingImages, 3000);
+      }
+    },
+    handleThirst() {
+      if (!this.isDead) {
+        this.playAudio(drinkSound);
+        this.waterPet();
+        this.startAnimation(this.drinkinkimages, 3000);
       }
     },
     handlePlay() {
@@ -306,6 +339,7 @@ export default {
       this.isDead = false;
       this.startWalkingAnimation();
       this.startHungerTimer();
+      this.startThirstTimer();
       this.startHappinessTimer();
       this.startCleanlinessTimer();
       this.startEnergyTimer();
@@ -317,6 +351,8 @@ export default {
       const action = event.dataTransfer.getData('action');
       if (action === 'feed') {
         this.handleFeed();
+      } else if (action === 'water') {
+        this.handleThirst();
       } else if (action === 'play') {
         this.handlePlay();
       } else if (action === 'clean') {

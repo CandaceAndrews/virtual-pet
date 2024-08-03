@@ -17,6 +17,13 @@
         <div class="progress-bar" :style="{ width: hungerPercentage + '%' }"></div>
       </div>
     </div>
+    <!-- THIRST BAR -->
+    <div class="bar">
+      <span>Thirst</span>
+      <div class="progress">
+        <div class="progress-bar" :style="{ width: thirstPercentage + '%' }"></div>
+      </div>
+    </div>
     <!-- HAPPINESS BAR -->
     <div class="bar">
       <span>Happiness</span>
@@ -53,6 +60,9 @@ export default {
     },
     hungerPercentage() {
       return this.pet.hunger;
+    },
+    thirstPercentage() {
+      return this.pet.thirst;
     },
     happinessPercentage() {
       return this.pet.happiness;

@@ -8,6 +8,13 @@
       @dragstart="onDragStart($event, 'feed')"
     />
     <img
+      src="@/assets/icons/water.png"
+      alt="Water"
+      class="draggable"
+      id="water"
+      @dragstart="onDragStart($event, 'water')"
+    />
+    <img
       src="@/assets/icons/toy.png"
       alt="Toy"
       class="draggable"
@@ -48,11 +55,18 @@ export default {
   cursor: grab;
 }
 
+#water {
+  width: 60px;
+  height: 60px;
+  cursor: grab;
+  margin: 0px 35px 2px 35px;
+}
+
 #play {
   width: 50px;
   height: 50px;
   cursor: grab;
-  margin: 0px 20px 2px 20px;
+  margin: 0px 35px 2px 0px;
 }
 
 #clean {
