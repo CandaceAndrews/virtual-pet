@@ -4,16 +4,20 @@ export default createStore({
   state: {
     pet: {
       name: 'Tyrannosaurus Rex',
-      life: 20,
+      life: 10,
       hunger: 10,
+      thirst: 10,
       happiness: 10,
       cleanliness: 10,
-      energy: 20,
+      energy: 10,
     },
   },
   mutations: {
     feedPet(state) {
       state.pet.hunger = Math.min(state.pet.hunger + 10, 100);
+    },
+    waterPet(state) {
+      state.pet.thirst = Math.min(state.pet.thirst + 10, 100);
     },
     playWithPet(state) {
       state.pet.happiness = Math.min(state.pet.happiness + 10, 100);
@@ -23,6 +27,9 @@ export default createStore({
     },
     decreaseHunger(state) {
       state.pet.hunger = Math.max(state.pet.hunger - 1, 0);
+    },
+    decreaseThirst(state) {
+      state.pet.thirst = Math.max(state.pet.thirst - 1, 0);
     },
     decreaseHappiness(state) {
       state.pet.happiness = Math.max(state.pet.happiness - 1, 0);
@@ -44,6 +51,7 @@ export default createStore({
     },
     resetPet(state) {
       state.pet.hunger = 100;
+      state.pet.thirst = 100;
       state.pet.happiness = 100;
       state.pet.cleanliness = 100;
       state.pet.energy = 100;
@@ -54,6 +62,9 @@ export default createStore({
     feedPet({ commit }) {
       commit('feedPet');
     },
+    waterPet({ commit }) {
+      commit('waterPet');
+    },
     playWithPet({ commit }) {
       commit('playWithPet');
     },
@@ -62,6 +73,9 @@ export default createStore({
     },
     decreaseHunger({ commit }) {
       commit('decreaseHunger');
+    },
+    decreaseThirst({ commit }) {
+      commit('decreaseThirst');
     },
     decreaseHappiness({ commit }) {
       commit('decreaseHappiness');
