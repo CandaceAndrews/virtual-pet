@@ -249,6 +249,8 @@ export default {
       this.lifeInterval = setInterval(() => {
         if (this.pet.hunger === 0 && this.pet.thirst === 0 && this.pet.happiness === 0 && this.pet.cleanliness === 0) {
           this.decreaseLife();
+        } else if (this.pet.hunger !== 0 && this.pet.thirst !== 0 && this.pet.happiness !== 0 && this.pet.cleanliness !== 0) {
+          this.increaseLife();
         }
       }, 1000); // Check every 1 second
     },
