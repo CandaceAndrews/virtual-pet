@@ -44,7 +44,7 @@ export default createStore({
       state.pet.life = Math.max(state.pet.life - 1, 0);
     },
     increaseLife(state){
-      state.pet.life = Math.min(state.pet.life + 5, 100);
+      state.pet.life = Math.min(state.pet.life + 1, 100);
     },
     increaseEnergy(state) {
       state.pet.energy = Math.min(state.pet.energy + 15, 100);
