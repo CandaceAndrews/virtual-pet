@@ -69,12 +69,12 @@ export default {
   },
   data() {
     return {
-      walkingImages: [walk1, walk2, walk3, walk4],
-      eatingImages: [eat1, eat2, eat3, eat4],
-      drinkinkimages: [drink1, drink2, drink3, drink4],
-      playingImages: [play1, play2],
-      cleaningImages: [clean1, clean2, clean3, clean4, clean5],
-      sleepingImages: [sleep1, sleep2],
+      walkImages: [walk1, walk2, walk3, walk4],
+      eatImages: [eat1, eat2, eat3, eat4],
+      drinkImages: [drink1, drink2, drink3, drink4],
+      playImages: [play1, play2],
+      cleanImages: [clean1, clean2, clean3, clean4, clean5],
+      sleepImages: [sleep1, sleep2],
       deathImages: [death1, death2, death3, death4],
       currentImageIndex: 0,
       petImage: walk1,
@@ -130,7 +130,7 @@ export default {
   mounted() {
     this.startWalkingAnimation();
     eventBus.$on('feedPet', this.handleFeed); // Listen for 'feedPet' event
-    eventBus.$on('waterPet', this.handleWater);
+    eventBus.$on('waterPet', this.handleThirst);
     eventBus.$on('playWithPet', this.handlePlay); 
     eventBus.$on('cleanPet', this.handleClean); 
     this.startHungerTimer();
@@ -142,7 +142,7 @@ export default {
   },
   beforeUnmount() {
     eventBus.$off('feedPet', this.handleFeed); // Remove event listener
-    eventBus.$off('waterPet', this.handleWater);
+    eventBus.$off('waterPet', this.handleThirst);
     eventBus.$off('playWithPet', this.handlePlay); 
     eventBus.$off('cleanPet', this.handleClean); 
     clearInterval(this.animationInterval);
@@ -171,16 +171,14 @@ export default {
         if (callback) callback();
       }, duration);
     },
-
     startWalkingAnimation() {
       clearInterval(this.animationInterval); // Ensure any previous interval is cleared
       this.animationInterval = setInterval(() => {
-        this.currentImageIndex = (this.currentImageIndex + 1) % this.walkingImages.length;
-        this.petImage = this.walkingImages[this.currentImageIndex];
+        this.currentImageIndex = (this.currentImageIndex + 1) % this.walkImages.length;
+        this.petImage = this.walkImages[this.currentImageIndex];
       }, 230);
       this.movePet();
     },
-
     startSleeping() {
       if (this.isDead) return;
       this.isSleeping = true;
@@ -188,14 +186,13 @@ export default {
       clearInterval(this.movementInterval); // Stop movement
       this.currentImageIndex = 0;
       this.animationInterval = setInterval(() => {
-        this.currentImageIndex = (this.currentImageIndex + 1) % this.sleepingImages.length;
-        this.petImage = this.sleepingImages[this.currentImageIndex];
+        this.currentImageIndex = (this.currentImageIndex + 1) % this.sleepImages.length;
+        this.petImage = this.sleepImages[this.currentImageIndex];
       }, 230);
       this.energyInterval = setInterval(() => {
         this.increaseEnergy();
-      }, 1500); // Refill energy every 1.5 seconds
+      }, 1500); // Refill every 1.5 seconds
     },
-
     stopSleeping() {
       if (this.isDead) return;
       this.isSleeping = false;
@@ -203,7 +200,6 @@ export default {
       clearInterval(this.energyInterval); // Stop refilling energy
       this.startWalkingAnimation();
     },
-
     movePet() {
       const speed = 5;
       const petElement = this.$el.querySelector('.pet-image');
@@ -229,31 +225,26 @@ export default {
         this.decreaseHunger();
       }, 2000); // Decrease every 2 seconds
     },
-
     startThirstTimer() {
       this.thirstInterval = setInterval(() => {
         this.decreaseThirst();
       }, 2000);
     },
-
     startHappinessTimer() {
       this.happinessInterval = setInterval(() => {
         this.decreaseHappiness();
       }, 2000);
     },
-
     startCleanlinessTimer() {
       this.cleanlinessInterval = setInterval(() => {
         this.decreaseCleanliness();
       }, 1000); 
     },
-
     startEnergyTimer() {
       this.energyInterval = setInterval(() => {
         this.decreaseEnergy();
       }, 1500);
     },
-    
     startLifeTimer() {
       this.lifeInterval = setInterval(() => {
         if (this.pet.hunger === 0 && this.pet.thirst === 0 && this.pet.happiness === 0 && this.pet.cleanliness === 0) {
@@ -261,7 +252,6 @@ export default {
         }
       }, 1000); // Check every 1 second
     },
-    
     stopLifeTimer() {
       clearInterval(this.lifeInterval);
     },
@@ -283,7 +273,6 @@ export default {
       if (this.isDead) return;
       this.$store.dispatch('decreaseEnergy');
     },
-
     increaseEnergy() {
       if (this.isDead) return;
       this.$store.dispatch('increaseEnergy');
@@ -297,7 +286,7 @@ export default {
       if (!this.isDead) {
         this.playAudio(feedSound);
         this.feedPet();
-        this.startAnimation(this.eatingImages, 3000);
+        this.startAnimation(this.eatImages, 3000);
       }
     },
     handleThirst() {
@@ -307,7 +296,7 @@ export default {
       if (!this.isDead) {
         this.playAudio(drinkSound);
         this.waterPet();
-        this.startAnimation(this.drinkinkimages, 3000);
+        this.startAnimation(this.drinkImages, 3000);
       }
     },
     handlePlay() {
@@ -317,7 +306,7 @@ export default {
       if (!this.isDead) {
         this.playAudio(playSound);
         this.playWithPet();
-        this.startAnimation(this.playingImages, 3000);
+        this.startAnimation(this.playImages, 3000);
       }
     },
     handleClean() {
@@ -327,24 +316,21 @@ export default {
       if (!this.isDead) {
         this.playAudio(cleanSound); 
         this.cleanPet();
-        this.startAnimation(this.cleaningImages, 3000);
+        this.startAnimation(this.cleanImages, 3000);
       }
     },
-
     handleDeath() {
       this.isDead = true;
       clearInterval(this.animationInterval);
       clearInterval(this.movementInterval);
       clearInterval(this.energyInterval);
       this.$refs.notification.showNotification('Your pet has died!');
-      
       // Start continuous death animation
       this.animationInterval = setInterval(() => {
         this.currentImageIndex = (this.currentImageIndex + 1) % this.deathImages.length;
         this.petImage = this.deathImages[this.currentImageIndex];
       }, 230); // 230 milliseconds between each frame of the death animation
     },
-
     handleRestart() {
       clearInterval(this.animationInterval);
       this.resetPet();
