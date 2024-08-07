@@ -194,7 +194,7 @@ export default {
       }, 1500); // Refill every 1.5 seconds
     },
     stopSleeping() {
-      if (this.isDead) return;
+      if (this.isDead || this.pet.energy === 0 || !this.isSleeping) return;
       this.isSleeping = false;
       clearInterval(this.animationInterval); // Stop sleeping animation
       clearInterval(this.energyInterval); // Stop refilling energy
