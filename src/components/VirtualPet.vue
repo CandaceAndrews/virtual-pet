@@ -155,7 +155,11 @@ export default {
     clearInterval(this.lifeInterval);
   },
   methods: {
-    ...mapActions(['feedPet', 'waterPet', 'playWithPet', 'cleanPet', 'increaseEnergy', 'decreaseEnergy', 'increaseLife', 'decreaseLife', 'resetPet']),
+    ...mapActions([
+      'feedPet', 'waterPet', 'playWithPet', 
+      'cleanPet', 'increaseEnergy', 'decreaseEnergy', 
+      'increaseLife', 'decreaseLife', 'resetPet'
+    ]),
 
     startAnimation(images, duration, callback) {
       clearInterval(this.animationInterval);
@@ -167,6 +171,9 @@ export default {
       }, 230);
       setTimeout(() => {
         clearInterval(this.animationInterval);
+        if (this.isSleeping) {
+          this.isSleeping = false;
+        }
         this.startWalkingAnimation();
         if (callback) callback();
       }, duration);
@@ -180,7 +187,7 @@ export default {
       this.movePet();
     },
     startSleeping() {
-      if (this.isDead) return;
+      if (this.isDead || this.isSleeping) return;
       this.isSleeping = true;
       clearInterval(this.animationInterval); // Stop other animations
       clearInterval(this.movementInterval); // Stop movement
@@ -190,11 +197,13 @@ export default {
         this.petImage = this.sleepImages[this.currentImageIndex];
       }, 230);
       this.energyInterval = setInterval(() => {
-        this.increaseEnergy();
+        if (this.pet.energy < 100) {
+          this.increaseEnergy();
+        }
       }, 1500); // Refill every 1.5 seconds
     },
     stopSleeping() {
-      if (this.isDead || this.pet.energy === 0 || !this.isSleeping) return;
+      if (this.isDead || !this.isSleeping) return;
       this.isSleeping = false;
       clearInterval(this.animationInterval); // Stop sleeping animation
       clearInterval(this.energyInterval); // Stop refilling energy
@@ -282,9 +291,8 @@ export default {
 
     // -- Handle Methods --
     handleFeed() {
-      if (this.isSleeping) {
-        this.stopSleeping();
-      }
+      if (this.isSleeping && this.pet.energy ===0) return;
+      if (this.isSleeping) this.stopSleeping();
       if (!this.isDead) {
         this.playAudio(feedSound);
         this.feedPet();
@@ -292,9 +300,8 @@ export default {
       }
     },
     handleThirst() {
-      if (this.isSleeping) {
-        this.stopSleeping();
-      }
+      if (this.isSleeping && this.pet.energy ===0) return;
+      if (this.isSleeping) this.stopSleeping();
       if (!this.isDead) {
         this.playAudio(drinkSound);
         this.waterPet();
@@ -302,9 +309,8 @@ export default {
       }
     },
     handlePlay() {
-      if (this.isSleeping) {
-        this.stopSleeping();
-      }
+      if (this.isSleeping && this.pet.energy ===0) return;
+      if (this.isSleeping) this.stopSleeping();
       if (!this.isDead) {
         this.playAudio(playSound);
         this.playWithPet();
@@ -312,9 +318,8 @@ export default {
       }
     },
     handleClean() {
-      if (this.isSleeping) {
-        this.stopSleeping();
-      }
+      if (this.isSleeping && this.pet.energy ===0) return;
+      if (this.isSleeping) this.stopSleeping();
       if (!this.isDead) {
         this.playAudio(cleanSound); 
         this.cleanPet();
@@ -348,6 +353,7 @@ export default {
     
     // -- Drop Methods --
     onDrop(event) {
+      if (this.isSleeping && this.pet.energy === 0) return;
       const action = event.dataTransfer.getData('action');
       if (action === 'feed') {
         this.handleFeed();
